@@ -1,0 +1,3042 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Emergency Dashboard</title>
+  <meta name="description" content="Hospital Emergency Response Dashboard - Real-time emergency management system">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+      <link rel="stylesheet" href="/css/firstPage.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+
+  <!-- For maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+  <!-- For charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+      /* Global Styles */
+      :root {
+          --primary-color: #064e93;
+          --primary-light: #3a73ad;
+          --primary-dark: #053b70;
+          --secondary-color: #0288d1;
+          --secondary-light: #5eb8ff;
+          --secondary-dark: #005b9f;
+          --accent-color: #26a69a;
+          --accent-hover: #00796b;
+          --danger-color: #d32f2f;
+          --warning-color: #f57c00;
+          --info-color: #1976d2;
+          --success-color: #388e3c;
+          --light-color: #eceff1;
+          --dark-color: #263238;
+          --gray-color: #607d8b;
+          --gray-light: #b0bec5;
+          --gray-dark: #455a64;
+          --critical-color: #d32f2f;
+          --high-color: #f57c00;
+          --medium-color: #1976d2;
+          --low-color: #388e3c;
+
+          --font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+          --border-radius: 8px;
+          --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          --transition-speed: 0.3s;
+      }
+
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      body {
+          font-family: var(--font-family);
+          font-size: 14px;
+          line-height: 1.6;
+          color: #37474f;
+          background-color: #f5f7fa;
+          min-height: 100vh;
+          /* display: flex; */
+          position: relative;
+      }
+      .main{
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Government Site Header */
+      .top-header {
+          background-color: var(--primary-dark);
+          color: white;
+          padding: 10px 0;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .government-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          max-width: 1600px;
+          margin: 0 auto;
+          padding: 0 20px;
+          height: 60px;
+      }
+
+      .govt-logo {
+          height: 40px;
+          margin-right: 15px;
+      }
+
+      .govt-title {
+          display: flex;
+          align-items: center;
+      }
+
+      .government-bar h1 {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin: 0;
+          letter-spacing: 0.5px;
+      }
+
+      .govt-actions {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+      }
+
+      .lang-toggle,
+      .accessibility-btn {
+          background: none;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: white;
+          padding: 5px 10px;
+          border-radius: var(--border-radius);
+          cursor: pointer;
+          font-size: 0.85rem;
+          transition: all 0.2s ease;
+      }
+
+      .lang-toggle:hover,
+      .accessibility-btn:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      #current-time {
+          font-size: 0.9rem;
+          font-weight: 500;
+          padding: 5px 10px;
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: var(--border-radius);
+      }
+
+      /* Dashboard Container */
+      .dashboard-container {
+          max-width: 1600px;
+          margin: 20px auto;
+          padding: 0 20px;
+      }
+
+      .dashboard-header {
+          margin-bottom: 20px;
+      }
+
+      .dashboard-header h1 {
+          font-size: 2rem;
+          margin-bottom: 5px;
+          color: var(--dark-color);
+      }
+
+      .dashboard-subtitle {
+          color: var(--gray-color);
+          font-size: 1rem;
+          margin-bottom: 15px;
+      }
+
+      .alert-banner {
+          background-color: rgba(211, 47, 47, 0.1);
+          border-left: 4px solid var(--danger-color);
+          padding: 12px 15px;
+          border-radius: var(--border-radius);
+          display: flex;
+          align-items: center;
+          margin-top: 15px;
+      }
+
+      .alert-banner i {
+          color: var(--danger-color);
+          margin-right: 10px;
+          font-size: 1.2rem;
+      }
+
+      .alert-banner span {
+          flex: 1;
+          font-weight: 500;
+      }
+
+      .view-all-btn {
+          background: none;
+          border: none;
+          color: var(--primary-color);
+          font-weight: 500;
+          cursor: pointer;
+          padding: 5px 10px;
+          border-radius: var(--border-radius);
+      }
+
+      .view-all-btn:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      /* Quick Stats */
+      .quick-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 20px;
+          margin-bottom: 20px;
+      }
+
+      .stat-card {
+          background-color: white;
+          border-radius: var(--border-radius);
+          padding: 20px;
+          display: flex;
+          align-items: center;
+          box-shadow: var(--box-shadow);
+          border-left: 4px solid transparent;
+          transition: transform 0.2s ease;
+      }
+
+      .stat-card:hover {
+          transform: translateY(-5px);
+      }
+
+      .stat-card.emergency {
+          border-left-color: var(--danger-color);
+      }
+
+      .stat-card.resources {
+          border-left-color: var(--info-color);
+      }
+
+      .stat-card.helpers {
+          border-left-color: var(--success-color);
+      }
+
+      .stat-card.pandemic {
+          border-left-color: var(--warning-color);
+      }
+
+      .stat-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 15px;
+          font-size: 1.5rem;
+      }
+
+      .stat-card.emergency .stat-icon {
+          background-color: rgba(211, 47, 47, 0.1);
+          color: var(--danger-color);
+      }
+
+      .stat-card.resources .stat-icon {
+          background-color: rgba(25, 118, 210, 0.1);
+          color: var(--info-color);
+      }
+
+      .stat-card.helpers .stat-icon {
+          background-color: rgba(56, 142, 60, 0.1);
+          color: var(--success-color);
+      }
+
+      .stat-card.pandemic .stat-icon {
+          background-color: rgba(245, 124, 0, 0.1);
+          color: var(--warning-color);
+      }
+
+      .stat-details {
+          flex: 1;
+      }
+
+      .stat-details h3 {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: var(--gray-color);
+          margin-bottom: 5px;
+      }
+
+      .stat-value {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--dark-color);
+          margin-bottom: 5px;
+      }
+
+      .stat-trend {
+          font-size: 0.8rem;
+          display: flex;
+          align-items: center;
+      }
+
+      .stat-trend.up {
+          color: var(--success-color);
+      }
+
+      .stat-trend.down {
+          color: var(--danger-color);
+      }
+
+      .stat-trend i {
+          margin-right: 5px;
+      }
+
+      /* Main Grid Layout */
+      .main-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+      }
+
+      .grid-item {
+          background-color: white;
+          border-radius: var(--border-radius);
+          box-shadow: var(--box-shadow);
+          overflow: hidden;
+          border-top: 3px solid transparent;
+          transition: transform 0.2s ease;
+      }
+
+      .grid-item:hover {
+          transform: translateY(-3px);
+      }
+
+      .emergency-map {
+          grid-column: span 2;
+          grid-row: span 2;
+          border-top-color: var(--danger-color);
+      }
+
+      .recent-emergencies {
+          grid-column: span 2;
+          grid-row: span 2;
+          border-top-color: var(--warning-color);
+      }
+
+      .resource-management {
+          grid-column: span 2;
+          border-top-color: var(--info-color);
+      }
+
+      .pandemic-trends {
+          grid-column: span 2;
+          border-top-color: var(--medium-color);
+      }
+
+      .hospital-capacity {
+          grid-column: span 2;
+          border-top-color: var(--success-color);
+      }
+
+      .staff-deployment {
+          grid-column: span 2;
+          border-top-color: var(--accent-color);
+      }
+
+      .communication-hub {
+          grid-column: span 4;
+          border-top-color: var(--primary-color);
+      }
+
+      .section-header {
+          padding: 15px;
+          border-bottom: 1px solid var(--light-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .section-header h2 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--dark-color);
+      }
+
+      .section-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+      }
+
+      .section-actions button {
+          background: none;
+          border: none;
+          color: var(--gray-color);
+          cursor: pointer;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--border-radius);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+      }
+
+      .section-actions button:hover {
+          background-color: var(--light-color);
+          color: var(--dark-color);
+      }
+
+      .section-actions select {
+          padding: 5px 10px;
+          border: 1px solid var(--gray-light);
+          border-radius: var(--border-radius);
+          background-color: white;
+          font-size: 0.85rem;
+          color: var(--dark-color);
+      }
+
+      .section-content {
+          padding: 15px;
+      }
+
+      /* Map Container */
+      .map-container {
+          height: 400px;
+          width: 100%;
+          position: relative;
+          border-radius: var(--border-radius);
+          overflow: hidden;
+      }
+
+      .map-legend {
+          display: flex;
+          justify-content: flex-end;
+          gap: 15px;
+          margin-top: 10px;
+          background-color: rgba(255, 255, 255, 0.9);
+          padding: 8px 12px;
+          border-radius: var(--border-radius);
+      }
+
+      .legend-item {
+          display: flex;
+          align-items: center;
+          font-size: 0.85rem;
+      }
+
+      .legend-marker {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          margin-right: 5px;
+      }
+
+      .legend-marker.critical {
+          background-color: var(--critical-color);
+      }
+
+      .legend-marker.high {
+          background-color: var(--high-color);
+      }
+
+      .legend-marker.medium {
+          background-color: var(--medium-color);
+      }
+
+      .legend-marker.low {
+          background-color: var(--low-color);
+      }
+
+      /* Alert List */
+      .alert-list {
+          list-style: none;
+          max-height: 400px;
+          overflow-y: auto;
+      }
+
+      .alert-list li {
+          display: flex;
+          align-items: center;
+          padding: 15px;
+          border-bottom: 1px solid var(--light-color);
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .alert-list li:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+      }
+
+      .alert-list li:last-child {
+          border-bottom: none;
+      }
+
+      .alert-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 15px;
+      }
+
+      .alert-list li.critical .alert-icon {
+          background-color: rgba(211, 47, 47, 0.1);
+          color: var(--critical-color);
+      }
+
+      .alert-list li.high .alert-icon {
+          background-color: rgba(245, 124, 0, 0.1);
+          color: var(--high-color);
+      }
+
+      .alert-list li.medium .alert-icon {
+          background-color: rgba(25, 118, 210, 0.1);
+          color: var(--medium-color);
+      }
+
+      .alert-list li.handled .alert-icon {
+          background-color: rgba(96, 125, 139, 0.1);
+          color: var(--gray-color);
+      }
+
+      .alert-details {
+          flex: 1;
+      }
+
+      .alert-details h4 {
+          font-size: 0.95rem;
+          font-weight: 600;
+          margin-bottom: 3px;
+      }
+
+      .alert-details p {
+          font-size: 0.85rem;
+          color: var(--gray-color);
+      }
+
+      .alert-time {
+          font-size: 0.8rem;
+          color: var(--gray-light);
+          margin-top: 3px;
+          display: block;
+      }
+
+      .alert-actions {
+          margin-left: 15px;
+      }
+
+      .respond-btn {
+          background-color: var(--secondary-color);
+          color: white;
+          border: none;
+          border-radius: var(--border-radius);
+          padding: 6px 12px;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+      }
+
+      .respond-btn:hover {
+          background-color: var(--secondary-dark);
+      }
+
+      .respond-btn i {
+          font-size: 0.8rem;
+      }
+
+      /* Resource Charts */
+      .resource-charts {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+          gap: 15px;
+      }
+
+      .resource-chart {
+          text-align: center;
+      }
+
+      .chart-title {
+          font-size: 0.9rem;
+          color: var(--gray-color);
+          margin-bottom: 15px;
+      }
+
+      .chart-visual {
+          display: flex;
+          justify-content: center;
+      }
+
+      .progress-circle {
+          position: relative;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background: var(--light-color);
+      }
+
+      .progress-circle:before {
+          content: '';
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
+          border-radius: 50%;
+          background: white;
+      }
+
+      .progress-circle[data-percentage="68"]:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: conic-gradient(var(--critical-color) 0% 68%, transparent 68% 100%);
+      }
+
+      .progress-circle[data-percentage="45"]:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: conic-gradient(var(--medium-color) 0% 45%, transparent 45% 100%);
+      }
+
+      .progress-circle[data-percentage="82"]:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: conic-gradient(var(--high-color) 0% 82%, transparent 82% 100%);
+      }
+
+      .progress-circle[data-percentage="75"]:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: conic-gradient(var(--success-color) 0% 75%, transparent 75% 100%);
+      }
+
+      .progress-content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
+      }
+
+      .progress-content h4 {
+          font-size: 1.3rem;
+          font-weight: 700;
+          margin: 0;
+      }
+
+      .progress-content p {
+          font-size: 0.7rem;
+          color: var(--gray-color);
+          margin: 0;
+      }
+
+      .allocate-btn {
+          margin-top: 20px;
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: var(--border-radius);
+          padding: 8px 16px;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+      }
+
+      .allocate-btn:hover {
+          background-color: var(--primary-dark);
+      }
+
+      /* Hospital Capacity */
+      .hospital-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 15px;
+          max-height: 220px;
+          overflow-y: auto;
+      }
+
+      .hospital-card {
+          background-color: var(--light-color);
+          border-radius: var(--border-radius);
+          padding: 15px;
+          text-align: center;
+          transition: transform 0.2s ease;
+      }
+
+      .hospital-card:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--box-shadow);
+          background-color: white;
+      }
+
+      .hospital-name {
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin-bottom: 10px;
+      }
+
+      .hospital-status {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+      }
+
+      .status-item {
+          font-size: 0.85rem;
+          display: flex;
+          justify-content: space-between;
+      }
+
+      .status-value {
+          font-weight: 600;
+      }
+
+      .status-critical {
+          color: var(--danger-color);
+      }
+
+      .status-warning {
+          color: var(--warning-color);
+      }
+
+      .status-good {
+          color: var(--success-color);
+      }
+
+      /* Team Deployment */
+      .team-status {
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: 20px;
+      }
+
+      .team-header {
+          text-align: center;
+      }
+
+      .team-label {
+          display: block;
+          font-size: 0.9rem;
+          color: var(--gray-color);
+          margin-bottom: 5px;
+      }
+
+      .team-count {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--dark-color);
+      }
+
+      .deployment-actions {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+      }
+
+      .action-btn {
+          border: none;
+          border-radius: var(--border-radius);
+          padding: 8px 15px;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .deploy-btn {
+          background-color: var(--success-color);
+          color: white;
+      }
+
+      .deploy-btn:hover {
+          background-color: #2e7d32;
+      }
+
+      .recall-btn {
+          background-color: var(--warning-color);
+          color: white;
+      }
+
+      .recall-btn:hover {
+          background-color: #ef6c00;
+      }
+
+      .rotate-btn {
+          background-color: var(--info-color);
+          color: white;
+      }
+
+      .rotate-btn:hover {
+          background-color: #1565c0;
+      }
+
+      /* Communication Hub */
+      .communication-tabs {
+          display: flex;
+          gap: 5px;
+          margin-bottom: 15px;
+          border-bottom: 1px solid var(--light-color);
+      }
+
+      .comm-tab {
+          background: none;
+          border: none;
+          padding: 8px 15px;
+          font-size: 0.95rem;
+          cursor: pointer;
+          color: var(--gray-color);
+          position: relative;
+          transition: all 0.2s ease;
+      }
+
+      .comm-tab.active {
+          color: var(--primary-color);
+          font-weight: 500;
+      }
+
+      .comm-tab.active:after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: var(--primary-color);
+      }
+
+      .comm-tab:hover:not(.active) {
+          background-color: rgba(0, 0, 0, 0.03);
+          color: var(--primary-light);
+      }
+
+      .communication-content {
+          display: none;
+      }
+
+      .communication-content.active {
+          display: block;
+      }
+
+      .broadcast-form {
+          margin-bottom: 20px;
+      }
+
+      .broadcast-form input {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid var(--gray-light);
+          border-radius: var(--border-radius);
+          margin-bottom: 10px;
+          font-size: 0.95rem;
+          transition: all 0.2s ease;
+      }
+
+      .broadcast-form input:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(6, 78, 147, 0.2);
+      }
+
+      .broadcast-targets {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 10px;
+      }
+
+      .broadcast-targets label {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 0.9rem;
+          cursor: pointer;
+      }
+
+      .broadcast-targets input[type="checkbox"] {
+          accent-color: var(--primary-color);
+      }
+
+      .send-broadcast {
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: var(--border-radius);
+          padding: 8px 16px;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+      }
+
+      .send-broadcast:hover {
+          background-color: var(--primary-dark);
+      }
+
+      .send-broadcast i {
+          font-size: 0.8rem;
+      }
+
+      .broadcast-history h4 {
+          font-size: 0.95rem;
+          font-weight: 600;
+          margin-bottom: 10px;
+          color: var(--dark-color);
+      }
+
+      .broadcast-list {
+          list-style: none;
+      }
+
+      .broadcast-item {
+          padding: 10px 0;
+          border-bottom: 1px solid var(--light-color);
+      }
+
+      .broadcast-time {
+          font-size: 0.8rem;
+          color: var(--gray-color);
+          margin-right: 10px;
+      }
+
+      .broadcast-message {
+          font-size: 0.9rem;
+      }
+
+      /* Report Section */
+      .reports-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+      }
+
+      .report-card {
+          background-color: white;
+          border-radius: var(--border-radius);
+          box-shadow: var(--box-shadow);
+          overflow: hidden;
+          transition: transform 0.2s ease;
+          border-left: 4px solid var(--primary-color);
+      }
+
+      .report-card:hover {
+          transform: translateY(-5px);
+      }
+
+      .report-header {
+          padding: 15px;
+          border-bottom: 1px solid var(--light-color);
+          background-color: rgba(6, 78, 147, 0.05);
+      }
+
+      .report-header h3 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--dark-color);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+      }
+
+      .report-header i {
+          color: var(--primary-color);
+          font-size: 1rem;
+      }
+
+      .report-content {
+          padding: 15px;
+      }
+
+      .report-stats {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 15px;
+      }
+
+      .report-stat {
+          text-align: center;
+      }
+
+      .report-value {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: var(--dark-color);
+          margin-bottom: 2px;
+      }
+
+      .report-label {
+          font-size: 0.75rem;
+          color: var(--gray-color);
+      }
+
+      .report-footer {
+          padding: 10px 15px;
+          border-top: 1px solid var(--light-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .report-date {
+          font-size: 0.8rem;
+          color: var(--gray-color);
+      }
+
+      .report-actions {
+          display: flex;
+          gap: 10px;
+      }
+
+      .report-btn {
+          background: none;
+          border: none;
+          color: var(--primary-color);
+          font-size: 0.9rem;
+          cursor: pointer;
+          padding: 5px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+      }
+
+      .report-btn i {
+          font-size: 0.8rem;
+      }
+
+      .report-description {
+          font-size: 0.9rem;
+          color: var(--gray-dark);
+          margin-bottom: 15px;
+          line-height: 1.5;
+      }
+
+      /* Toast Notifications */
+      .toast-container {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+
+      .toast {
+          min-width: 300px;
+          background-color: white;
+          border-radius: var(--border-radius);
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+          padding: 15px;
+          animation: slide-in 0.3s ease-out forwards;
+          display: flex;
+          align-items: center;
+          border-left: 4px solid;
+      }
+
+      @keyframes slide-in {
+          from {
+              transform: translateX(100%);
+              opacity: 0;
+          }
+
+          to {
+              transform: translateX(0);
+              opacity: 1;
+          }
+      }
+
+      @keyframes fade-out {
+          from {
+              transform: translateX(0);
+              opacity: 1;
+          }
+
+          to {
+              transform: translateX(100%);
+              opacity: 0;
+          }
+      }
+
+      .toast.fade-out {
+          animation: fade-out 0.3s ease-in forwards;
+      }
+
+      .toast.success {
+          border-left-color: var(--success-color);
+      }
+
+      .toast.warning {
+          border-left-color: var(--warning-color);
+      }
+
+      .toast.error {
+          border-left-color: var(--danger-color);
+      }
+
+      .toast.info {
+          border-left-color: var(--info-color);
+      }
+
+      .toast-icon {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 10px;
+      }
+
+      .toast.success .toast-icon {
+          background-color: rgba(56, 142, 60, 0.1);
+          color: var(--success-color);
+      }
+
+      .toast.warning .toast-icon {
+          background-color: rgba(245, 124, 0, 0.1);
+          color: var(--warning-color);
+      }
+
+      .toast.error .toast-icon {
+          background-color: rgba(211, 47, 47, 0.1);
+          color: var(--danger-color);
+      }
+
+      .toast.info .toast-icon {
+          background-color: rgba(25, 118, 210, 0.1);
+          color: var(--info-color);
+      }
+
+      .toast-content {
+          flex: 1;
+      }
+
+      .toast-title {
+          font-size: 0.95rem;
+          font-weight: 600;
+          margin-bottom: 3px;
+      }
+
+      .toast-message {
+          font-size: 0.85rem;
+          color: var(--gray-color);
+      }
+
+      .toast-close {
+          background: none;
+          border: none;
+          color: var(--gray-color);
+          cursor: pointer;
+          padding: 5px;
+          margin-left: 10px;
+      }
+
+      /* Modal Overlay */
+      .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s, visibility 0.3s;
+      }
+
+      .modal-overlay.active {
+          opacity: 1;
+          visibility: visible;
+      }
+
+      .modal {
+          background-color: white;
+          border-radius: var(--border-radius);
+          width: 500px;
+          max-width: 95%;
+          animation: scale-in 0.3s ease-out forwards;
+          box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+          transform: scale(0.9);
+          transition: transform 0.3s;
+      }
+
+      .modal-overlay.active .modal {
+          transform: scale(1);
+      }
+
+      @keyframes scale-in {
+          from {
+              transform: scale(0.9);
+              opacity: 0;
+          }
+
+          to {
+              transform: scale(1);
+              opacity: 1;
+          }
+      }
+
+      .modal-header {
+          padding: 15px 20px;
+          border-bottom: 1px solid var(--light-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .modal-header h3 {
+          font-size: 1.2rem;
+          font-weight: 600;
+      }
+
+      .close-modal {
+          background: none;
+          border: none;
+          font-size: 1.2rem;
+          cursor: pointer;
+          color: var(--gray-color);
+          transition: color 0.2s;
+      }
+
+      .close-modal:hover {
+          color: var(--danger-color);
+      }
+
+      .modal-content {
+          padding: 20px;
+          max-height: 500px;
+          overflow-y: auto;
+      }
+
+      .modal-footer {
+          padding: 15px 20px;
+          border-top: 1px solid var(--light-color);
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+      }
+
+      .modal-footer button {
+          padding: 8px 15px;
+          border-radius: var(--border-radius);
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .secondary-btn {
+          background-color: var(--light-color);
+          border: none;
+          color: var(--gray-dark);
+      }
+
+      .secondary-btn:hover {
+          background-color: #dce0e3;
+      }
+
+      .primary-btn {
+          background-color: var(--primary-color);
+          border: none;
+          color: white;
+      }
+
+      .primary-btn:hover {
+          background-color: var(--primary-dark);
+      }
+
+      /* Response Form Styles */
+      .response-form {
+          font-size: 0.95rem;
+      }
+
+      .form-group {
+          margin-bottom: 15px;
+      }
+
+      .form-row {
+          display: flex;
+          gap: 15px;
+      }
+
+      .form-group.half {
+          flex: 1;
+      }
+
+      .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: 500;
+          color: var(--dark-color);
+      }
+
+      .form-control {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid var(--gray-light);
+          border-radius: var(--border-radius);
+          transition: all 0.2s ease;
+      }
+
+      .form-control:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(6, 78, 147, 0.2);
+      }
+
+      textarea.form-control {
+          resize: vertical;
+          min-height: 80px;
+      }
+
+      .checkbox-group {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+      }
+
+      .checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+      }
+
+      .checkbox-label input {
+          accent-color: var(--primary-color);
+      }
+
+      .form-warning {
+          background-color: rgba(245, 124, 0, 0.1);
+          border-left: 3px solid var(--warning-color);
+          padding: 10px 15px;
+          margin-bottom: 15px;
+          font-size: 0.9rem;
+          color: var(--dark-color);
+          border-radius: 4px;
+      }
+
+      .emergency-details .detail-row {
+          display: flex;
+          margin-bottom: 10px;
+      }
+
+      .emergency-details .detail-label {
+          font-weight: 600;
+          width: 150px;
+      }
+
+      .emergency-details .detail-value {
+          flex: 1;
+      }
+
+      .emergency-details .detail-value ul {
+          margin: 0;
+          padding-left: 20px;
+      }
+
+      .emergency-notes {
+          margin-top: 20px;
+          padding-top: 10px;
+          border-top: 1px solid var(--light-color);
+      }
+
+      .emergency-notes h4 {
+          margin-bottom: 5px;
+      }
+
+      /* Alert System Bar */
+      .alert-system-bar {
+          background-color: var(--danger-color);
+          color: white;
+          padding: 10px;
+          text-align: center;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+          0% {
+              background-color: var(--danger-color);
+          }
+
+          50% {
+              background-color: #b71c1c;
+          }
+
+          100% {
+              background-color: var(--danger-color);
+          }
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 1200px) {
+          .main-grid {
+              grid-template-columns: repeat(2, 1fr);
+          }
+
+          .emergency-map,
+          .recent-emergencies,
+          .resource-management,
+          .pandemic-trends,
+          .hospital-capacity,
+          .staff-deployment,
+          .communication-hub {
+              grid-column: span 2;
+          }
+      }
+
+      @media (max-width: 768px) {
+          .quick-stats {
+              grid-template-columns: repeat(2, 1fr);
+          }
+
+          .main-grid {
+              grid-template-columns: 1fr;
+          }
+
+          .emergency-map,
+          .recent-emergencies,
+          .resource-management,
+          .pandemic-trends,
+          .hospital-capacity,
+          .staff-deployment,
+          .communication-hub {
+              grid-column: span 1;
+          }
+
+          .resource-charts {
+              grid-template-columns: repeat(2, 1fr);
+          }
+
+          .form-row {
+              flex-direction: column;
+              gap: 15px;
+          }
+
+          .government-bar h1 {
+              display: none;
+          }
+      }
+
+      @media (max-width: 576px) {
+          .quick-stats {
+              grid-template-columns: 1fr;
+          }
+
+          .resource-charts {
+              grid-template-columns: 1fr;
+          }
+
+          .deployment-actions {
+              flex-direction: column;
+          }
+
+          .broadcast-targets {
+              flex-direction: column;
+              gap: 10px;
+          }
+
+          .toast {
+              min-width: auto;
+              width: calc(100vw - 40px);
+          }
+      }
+
+      /* Custom marker styles */
+      .custom-marker {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .custom-marker.critical {
+          background-color: rgba(211, 47, 47, 0.8);
+          color: white;
+      }
+
+      .custom-marker.high {
+          background-color: rgba(245, 124, 0, 0.8);
+          color: white;
+      }
+
+      .custom-marker.medium {
+          background-color: rgba(25, 118, 210, 0.8);
+          color: white;
+      }
+
+      .custom-marker.low {
+          background-color: rgba(56, 142, 60, 0.8);
+          color: white;
+      }
+
+      .map-popup h4 {
+          margin: 0 0 5px 0;
+      }
+
+      .map-popup p {
+          margin: 0 0 10px 0;
+      }
+
+      .map-popup .respond-btn {
+          background-color: var(--primary-dark);
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 5px 10px;
+          cursor: pointer;
+          font-size: 12px;
+      }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+   <!-- <div class="sidebar">
+  <div class="logo" onclick="window.location.href='/'">
+    <img src="/images/logo.png" alt="Pandemic Response Logo" class="logo-img" />
+  </div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-links" id="sidebar-links">
+      <a href="/" class="sidebar-link"
+        ><i class="fa-solid fa-home"></i> Home</a
+      >
+      <a href="/firstPage" class="sidebar-link"
+        ><i class="fa-solid fa-virus"></i> Dashboard</a
+      >
+      <a href="/pandamic" class="sidebar-link"
+        ><i class="fa-solid fa-virus"></i> Live Pandemic Stats</a
+      >
+      <a href="/request" class="sidebar-link"
+        ><i class="fa-solid fa-box-open"></i> Need Resources</a
+      >
+      <a href="/map" class="sidebar-link"
+        ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+      >
+      <a href="/stats" class="sidebar-link"
+        ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+      >
+      <a href="/organizations" class="sidebar-link"
+        ><i class="fa-solid fa-building"></i> Organizations</a
+      >
+      <a href="/org-dashboard" class="sidebar-link"
+        ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+      >
+      <a href="/user-dashboard" class="sidebar-link"
+        ><i class="fa-solid fa-user"></i> User Dashboard</a
+      >
+      <a href="/alerts" class="sidebar-link"
+        ><i class="fa-solid fa-alert"></i> Alerts</a
+      >
+      <a href="/profile" class="sidebar-link"
+        ><i class="fa-solid fa-id-card"></i> Profile</a
+      >
+      <a href="/admin" class="sidebar-link active"
+          ><i class="fa-solid fa-cogs"></i> Admin Dashboard</a
+        >
+        <a href="/hospital-dashboard" class="sidebar-link active"
+          ><i class="fa-solid fa-heartbeat"></i> Hospital Dashboard</a
+        >
+    </div>
+    <div class="user-profile">
+      <img
+        src="/default-user.png"
+        alt="User Photo"
+        id="user-photo"
+        class="user-photo"
+        onclick="toggleSidebarMobile()"
+      />
+      <div class="user-info">
+        <span id="user-name">User Name</span>
+        <span id="user-email">user@example.com</span>
+      </div>
+      <button class="profile-btn" onclick="window.location.href='/profile'">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+    <i class="fa-solid fa-bars mobile-hamburger"></i>
+  </div>
+</div> -->
+<div class="main">
+  <header class="top-header">
+      <div class="alert-system-bar" id="criticalAlertBar">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>EMERGENCY ALERT: Major incident reported in Downtown District</span>
+      </div>
+      <div class="government-bar">
+          <div class="govt-title">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blue_and_white_Health_star.svg/1200px-Blue_and_white_Health_star.svg.png"
+                  alt="Government Logo" class="govt-logo">
+              <h1>National Health Emergency Service</h1>
+          </div>
+          <div class="govt-actions">
+              <button class="lang-toggle">English <i class="fas fa-chevron-down"></i></button>
+              <button class="accessibility-btn"><i class="fas fa-universal-access"></i></button>
+              <span id="current-time">10:45 AM</span>
+          </div>
+      </div>
+  </header>
+
+
+  <div class="dashboard-container">
+      <div class="dashboard-header">
+          <h1>Emergency Response Dashboard</h1>
+          <p class="dashboard-subtitle">Hospital Administrator Control Panel</p>
+
+          <div class="alert-banner" id="alertBanner">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>4 Critical Emergencies Active</span>
+              <button class="view-all-btn">View All</button>
+          </div>
+      </div>
+
+      <div class="quick-stats">
+          <div class="stat-card emergency">
+              <div class="stat-icon">
+                  <i class="fas fa-exclamation-circle"></i>
+              </div>
+              <div class="stat-details">
+                  <h3>Active Emergencies</h3>
+                  <p class="stat-value">12</p>
+                  <p class="stat-trend up">
+                      <i class="fas fa-arrow-up"></i> 8% from yesterday
+                  </p>
+              </div>
+          </div>
+
+          <div class="stat-card resources">
+              <div class="stat-icon">
+                  <i class="fas fa-heartbeat"></i>
+              </div>
+              <div class="stat-details">
+                  <h3>Available Beds</h3>
+                  <p class="stat-value">43</p>
+                  <p class="stat-trend down">
+                      <i class="fas fa-arrow-down"></i> 5% from yesterday
+                  </p>
+              </div>
+          </div>
+
+          <div class="stat-card helpers">
+              <div class="stat-icon">
+                  <i class="fas fa-user-md"></i>
+              </div>
+              <div class="stat-details">
+                  <h3>Active Responders</h3>
+                  <p class="stat-value">28</p>
+                  <p class="stat-trend up">
+                      <i class="fas fa-arrow-up"></i> 12% from yesterday
+                  </p>
+              </div>
+          </div>
+
+          <div class="stat-card pandemic">
+              <div class="stat-icon">
+                  <i class="fas fa-virus"></i>
+              </div>
+              <div class="stat-details">
+                  <h3>New Cases Today</h3>
+                  <p class="stat-value">156</p>
+                  <p class="stat-trend down">
+                      <i class="fas fa-arrow-down"></i> 3% from yesterday
+                  </p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Reports Section -->
+      <section class="reports-grid">
+          <div class="report-card">
+              <div class="report-header">
+                  <h3><i class="fas fa-file-medical-alt"></i> Daily Emergency Summary</h3>
+              </div>
+              <div class="report-content">
+                  <div class="report-stats">
+                      <div class="report-stat">
+                          <div class="report-value">24</div>
+                          <div class="report-label">Total Incidents</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">18</div>
+                          <div class="report-label">Resolved</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">6</div>
+                          <div class="report-label">Active</div>
+                      </div>
+                  </div>
+                  <p class="report-description">
+                      Summary of emergency incidents reported in the last 24 hours. Response time average: 8.2
+                      minutes.
+                  </p>
+              </div>
+              <div class="report-footer">
+                  <div class="report-date">April 5, 2025</div>
+                  <div class="report-actions">
+                      <button class="report-btn"><i class="fas fa-download"></i> Download</button>
+                      <button class="report-btn"><i class="fas fa-share"></i> Share</button>
+                  </div>
+              </div>
+          </div>
+
+          <div class="report-card">
+              <div class="report-header">
+                  <h3><i class="fas fa-hospital-user"></i> Hospital Capacity Report</h3>
+              </div>
+              <div class="report-content">
+                  <div class="report-stats">
+                      <div class="report-stat">
+                          <div class="report-value">82%</div>
+                          <div class="report-label">Occupancy</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">43</div>
+                          <div class="report-label">Available</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">12</div>
+                          <div class="report-label">ICU Free</div>
+                      </div>
+                  </div>
+                  <p class="report-description">
+                      Current hospital network capacity status. Three hospitals are nearly at capacity and may need
+                      additional resources.
+                  </p>
+              </div>
+              <div class="report-footer">
+                  <div class="report-date">Updated: 10:30 AM</div>
+                  <div class="report-actions">
+                      <button class="report-btn"><i class="fas fa-download"></i> Download</button>
+                      <button class="report-btn"><i class="fas fa-share"></i> Share</button>
+                  </div>
+              </div>
+          </div>
+
+          <div class="report-card">
+              <div class="report-header">
+                  <h3><i class="fas fa-ambulance"></i> Response Time Analysis</h3>
+              </div>
+              <div class="report-content">
+                  <div class="report-stats">
+                      <div class="report-stat">
+                          <div class="report-value">8.2</div>
+                          <div class="report-label">Min Avg</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">5.5</div>
+                          <div class="report-label">Urban</div>
+                      </div>
+                      <div class="report-stat">
+                          <div class="report-value">12.8</div>
+                          <div class="report-label">Rural</div>
+                      </div>
+                  </div>
+                  <p class="report-description">
+                      Analysis of emergency response times across different areas. Response times have improved by 12%
+                      compared to last month.
+                  </p>
+              </div>
+              <div class="report-footer">
+                  <div class="report-date">April 5, 2025</div>
+                  <div class="report-actions">
+                      <button class="report-btn"><i class="fas fa-download"></i> Download</button>
+                      <button class="report-btn"><i class="fas fa-share"></i> Share</button>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      <div class="main-grid">
+          <!-- Emergency Map Section -->
+          <section class="grid-item emergency-map">
+              <div class="section-header">
+                  <h2><i class="fas fa-map-marker-alt"></i> Emergency Locations</h2>
+                  <div class="section-actions">
+                      <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                      <button class="expand-btn"><i class="fas fa-expand"></i></button>
+                  </div>
+              </div>
+              <div class="section-content">
+                  <div id="emergency-map" class="map-container"></div>
+                  <div class="map-legend">
+                      <div class="legend-item">
+                          <span class="legend-marker critical"></span>
+                          <span>Critical</span>
+                      </div>
+                      <div class="legend-item">
+                          <span class="legend-marker high"></span>
+                          <span>High</span>
+                      </div>
+                      <div class="legend-item">
+                          <span class="legend-marker medium"></span>
+                          <span>Medium</span>
+                      </div>
+                      <div class="legend-item">
+                          <span class="legend-marker low"></span>
+                          <span>Low</span>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Recent Emergencies Section -->
+          <section class="grid-item recent-emergencies">
+              <div class="section-header">
+                  <h2><i class="fas fa-bell"></i> Recent Emergency Alerts</h2>
+                  <div class="section-actions">
+                      <button class="filter-btn"><i class="fas fa-filter"></i></button>
+                  </div>
+              </div>
+              <div class="section-content">
+                  <ul class="alert-list" id="alertList">
+                      <!-- Alert items will be dynamically generated -->
+                  </ul>
+              </div>
+          </section>
+
+          <!-- Resource Management Section -->
+          <section class="grid-item resource-management">
+              <div class="section-header">
+                  <h2><i class="fas fa-briefcase-medical"></i> Resource Availability</h2>
+                  <div class="section-actions">
+                      <select class="resource-filter" id="resourceFilter">
+                          <option value="all">All Resources</option>
+                          <option value="beds">Hospital Beds</option>
+                          <option value="equipment">Medical Equipment</option>
+                          <option value="staff">Medical Staff</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="section-content">
+                  <div class="resource-charts">
+                      <div class="resource-chart">
+                          <div class="chart-title">ICU Beds</div>
+                          <div class="chart-visual">
+                              <div class="progress-circle" data-percentage="68">
+                                  <div class="progress-content">
+                                      <h4>68%</h4>
+                                      <p>Occupied</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="resource-chart">
+                          <div class="chart-title">Ventilators</div>
+                          <div class="chart-visual">
+                              <div class="progress-circle" data-percentage="45">
+                                  <div class="progress-content">
+                                      <h4>45%</h4>
+                                      <p>In Use</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="resource-chart">
+                          <div class="chart-title">Ambulances</div>
+                          <div class="chart-visual">
+                              <div class="progress-circle" data-percentage="82">
+                                  <div class="progress-content">
+                                      <h4>82%</h4>
+                                      <p>Dispatched</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="resource-chart">
+                          <div class="chart-title">Staff</div>
+                          <div class="chart-visual">
+                              <div class="progress-circle" data-percentage="75">
+                                  <div class="progress-content">
+                                      <h4>75%</h4>
+                                      <p>On Duty</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <button class="allocate-btn"><i class="fas fa-tasks"></i> Allocate Resources</button>
+              </div>
+          </section>
+
+          <!-- Pandemic Trends Section -->
+          <section class="grid-item pandemic-trends">
+              <div class="section-header">
+                  <h2><i class="fas fa-chart-line"></i> Pandemic Trends</h2>
+                  <div class="section-actions">
+                      <select class="time-filter" id="pandemicTimeFilter">
+                          <option value="7days">Last 7 Days</option>
+                          <option value="30days">Last 30 Days</option>
+                          <option value="90days">Last 90 Days</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="section-content">
+                  <canvas id="pandemic-chart" height="250"></canvas>
+              </div>
+          </section>
+
+          <!-- Hospital Capacity Section -->
+          <section class="grid-item hospital-capacity">
+              <div class="section-header">
+                  <h2><i class="fas fa-hospital"></i> Hospital Network Capacity</h2>
+                  <div class="section-actions">
+                      <button class="refresh-btn"><i class="fas fa-sync-alt"></i></button>
+                  </div>
+              </div>
+              <div class="section-content">
+                  <div class="hospital-grid" id="hospitalGrid">
+                      <!-- Hospital capacity cards will be dynamically generated -->
+                  </div>
+              </div>
+          </section>
+
+          <!-- Staff Deployment Section -->
+          <section class="grid-item staff-deployment">
+              <div class="section-header">
+                  <h2><i class="fas fa-users"></i> Emergency Team Deployment</h2>
+              </div>
+              <div class="section-content">
+                  <div class="team-status">
+                      <div class="team-header">
+                          <span class="team-label">Available Teams:</span>
+                          <span class="team-count">8</span>
+                      </div>
+                      <div class="team-header">
+                          <span class="team-label">Deployed Teams:</span>
+                          <span class="team-count">12</span>
+                      </div>
+                  </div>
+                  <div class="deployment-actions">
+                      <button class="action-btn deploy-btn"><i class="fas fa-user-plus"></i> Deploy Team</button>
+                      <button class="action-btn recall-btn"><i class="fas fa-user-minus"></i> Recall Team</button>
+                      <button class="action-btn rotate-btn"><i class="fas fa-sync"></i> Rotate Staff</button>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Communication Hub Section -->
+          <section class="grid-item communication-hub">
+              <div class="section-header">
+                  <h2><i class="fas fa-broadcast-tower"></i> Communication Hub</h2>
+              </div>
+              <div class="section-content">
+                  <div class="communication-tabs">
+                      <button class="comm-tab active" data-target="broadcasts">Broadcasts</button>
+                      <button class="comm-tab" data-target="alerts">Alerts</button>
+                      <button class="comm-tab" data-target="messages">Messages</button>
+                  </div>
+                  <div class="communication-content active" id="broadcasts">
+                      <div class="broadcast-form">
+                          <input type="text" placeholder="Type broadcast message..." id="broadcastMessage">
+                          <div class="broadcast-targets">
+                              <label><input type="checkbox" checked> All Hospitals</label>
+                              <label><input type="checkbox" checked> Emergency Teams</label>
+                              <label><input type="checkbox"> Volunteers</label>
+                          </div>
+                          <button class="send-broadcast"><i class="fas fa-paper-plane"></i> Send Broadcast</button>
+                      </div>
+                      <div class="broadcast-history">
+                          <h4>Recent Broadcasts</h4>
+                          <ul class="broadcast-list">
+                              <li class="broadcast-item">
+                                  <span class="broadcast-time">10:23 AM</span>
+                                  <span class="broadcast-message">All available ambulances requested to Central
+                                      Hospital</span>
+                              </li>
+                              <li class="broadcast-item">
+                                  <span class="broadcast-time">09:45 AM</span>
+                                  <span class="broadcast-message">Traffic accident on Highway 101, prepare trauma
+                                      units</span>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+                  <div class="communication-content" id="alerts">
+                      <!-- Alerts content -->
+                      <p>Emergency alert configuration</p>
+                  </div>
+                  <div class="communication-content" id="messages">
+                      <!-- Direct messages content -->
+                      <p>Direct messaging system</p>
+                  </div>
+              </div>
+          </section>
+      </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Modal Container -->
+  <div class="modal-overlay" id="modalOverlay">
+      <div class="modal" id="modal">
+          <div class="modal-header">
+              <h3 id="modalTitle">Emergency Details</h3>
+              <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-content" id="modalContent">
+              <!-- Modal content will be inserted by JavaScript -->
+          </div>
+          <div class="modal-footer">
+              <button class="secondary-btn" id="cancelModal">Cancel</button>
+              <button class="primary-btn" id="confirmModal">Confirm</button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Emergency Response Form Modal -->
+  <div class="modal-overlay" id="responseModalOverlay">
+      <div class="modal" id="responseModal">
+          <div class="modal-header">
+              <h3 id="responseModalTitle">Dispatch Emergency Response</h3>
+              <button class="close-modal" id="closeResponseModal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="modal-content">
+              <div class="form-warning">
+                  <i class="fas fa-exclamation-triangle"></i> This action will dispatch emergency resources. Please
+                  confirm details carefully.
+              </div>
+              <form id="responseForm" class="response-form">
+                  <div class="form-group">
+                      <label for="emergencyType">Emergency Type:</label>
+                      <select id="emergencyType" class="form-control">
+                          <option value="medical">Medical Emergency</option>
+                          <option value="trauma">Trauma</option>
+                          <option value="fire">Fire</option>
+                          <option value="hazmat">Hazardous Materials</option>
+                          <option value="other">Other</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="responseLevel">Response Level:</label>
+                      <select id="responseLevel" class="form-control">
+                          <option value="1">Level 1 - Minor</option>
+                          <option value="2">Level 2 - Moderate</option>
+                          <option value="3">Level 3 - Major</option>
+                          <option value="4">Level 4 - Critical</option>
+                          <option value="5">Level 5 - Catastrophic</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="responseLocation">Location:</label>
+                      <input type="text" id="responseLocation" class="form-control" placeholder="Emergency location">
+                  </div>
+                  <div class="form-row">
+                      <div class="form-group half">
+                          <label for="responseUnits">Units Required:</label>
+                          <input type="number" id="responseUnits" class="form-control" min="1" value="1">
+                      </div>
+                      <div class="form-group half">
+                          <label for="responseETA">Estimated Response Time (min):</label>
+                          <input type="number" id="responseETA" class="form-control" min="1" value="5">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="responseNotes">Additional Notes:</label>
+                      <textarea id="responseNotes" class="form-control" rows="3"
+                          placeholder="Additional information about the emergency"></textarea>
+                  </div>
+                  <div class="form-group checkbox-group">
+                      <label class="checkbox-label">
+                          <input type="checkbox" id="notifyHospitals" checked> Notify Nearby Hospitals
+                      </label>
+                  </div>
+                  <div class="form-group checkbox-group">
+                      <label class="checkbox-label">
+                          <input type="checkbox" id="requestBackup"> Request Backup
+                      </label>
+                  </div>
+                  <div class="form-group checkbox-group">
+                      <label class="checkbox-label">
+                          <input type="checkbox" id="activateProtocol"> Activate Emergency Protocol
+                      </label>
+                  </div>
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button class="secondary-btn" id="cancelResponse">Cancel</button>
+              <button class="primary-btn" id="confirmResponse">Dispatch</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <!-- JavaScript -->
+  <script src="/js/sidebar.js"></script>
+  <script>
+      // Global variables
+      let map;
+      let pandemicChart;
+      let alertsList = [];
+      let hospitalsList = [];
+      const emergencyTypes = [
+          'Cardiac Arrest',
+          'Traffic Accident',
+          'Building Fire',
+          'Stroke Patient',
+          'Workplace Injury',
+          'Severe Allergic Reaction',
+          'Drug Overdose',
+          'Natural Disaster',
+          'Mass Casualty Event',
+          'Hazardous Material Spill'
+      ];
+
+      const locations = [
+          'Downtown District',
+          'North Side Hospital',
+          'West End Apartments',
+          'Central Park',
+          'Industrial Zone',
+          'Shopping Mall',
+          'Highway Interchange',
+          'University Campus',
+          'Sports Stadium',
+          'Elementary School'
+      ];
+
+      // Initialize the dashboard
+      document.addEventListener('DOMContentLoaded', function () {
+          // Update current time
+          updateTime();
+          setInterval(updateTime, 60000); // Update every minute
+
+          // Initialize map
+          initMap();
+
+          // Initialize pandemic chart
+          initPandemicChart();
+
+          // Generate initial alert list
+          generateAlertsList();
+
+          // Generate hospital capacity data
+          generateHospitalsList();
+
+          // Initialize tabs
+          initTabs();
+
+          // Show welcome toast
+          showToast('System Online', 'Emergency Response Dashboard initialized successfully', 'info');
+
+          // Initialize modals
+          initModals();
+
+          // Add event listeners
+          addGlobalEventListeners();
+
+          // Simulate real-time emergencies
+          setTimeout(() => {
+              simulateEmergencies();
+          }, 10000);
+
+          // Refresh data automatically
+          setInterval(refreshData, 45000);
+
+          // Hide critical alert after delay
+          setTimeout(() => {
+              const criticalAlertBar = document.getElementById('criticalAlertBar');
+              if (criticalAlertBar) {
+                  criticalAlertBar.style.display = 'none';
+              }
+          }, 15000);
+      });
+
+      // Update time function
+      function updateTime() {
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          document.getElementById('current-time').textContent = timeString;
+      }
+
+      // Initialize map
+      function initMap() {
+          if (!document.getElementById('emergency-map')) return;
+
+          map = L.map('emergency-map').setView([37.7749, -122.4194], 12);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          // Add emergency markers
+          addEmergencyMarkers();
+      }
+
+      function addEmergencyMarkers() {
+          if (!map) return;
+
+          // Clear existing markers
+          map.eachLayer(layer => {
+              if (layer instanceof L.Marker) {
+                  map.removeLayer(layer);
+              }
+          });
+
+          // Add emergency markers
+          const emergencies = [
+              { lat: 37.7749, lng: -122.4194, type: 'critical', title: 'Multi-Vehicle Accident' },
+              { lat: 37.7833, lng: -122.4167, type: 'high', title: 'Cardiac Emergency' },
+              { lat: 37.7694, lng: -122.4862, type: 'medium', title: 'Respiratory Distress' },
+              { lat: 37.8044, lng: -122.4324, type: 'low', title: 'Minor Injury' },
+              { lat: 37.7624, lng: -122.4124, type: 'critical', title: 'Building Fire' },
+              { lat: 37.7524, lng: -122.4924, type: 'high', title: 'Gas Leak' }
+          ];
+
+          emergencies.forEach(emergency => {
+              const markerIcon = L.divIcon({
+                  className: `custom-marker ${emergency.type}`,
+                  html: `<i class="fas fa-exclamation-circle"></i>`,
+                  iconSize: [30, 30]
+              });
+
+              const marker = L.marker([emergency.lat, emergency.lng], { icon: markerIcon }).addTo(map);
+              marker.bindPopup(`
+          <div class="map-popup">
+            <h4>${emergency.title}</h4>
+            <p>Priority: ${emergency.type}</p>
+            <button class="respond-btn" onclick="openResponseModal('${emergency.title}', '${emergency.type}')">Respond</button>
+          </div>
+        `);
+          });
+      }
+
+      // Initialize pandemic chart
+      function initPandemicChart() {
+          const ctx = document.getElementById('pandemic-chart');
+          if (!ctx) return;
+
+          // Generate random data
+          const labels = Array.from({ length: 7 }, (_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() - (6 - i));
+              return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          });
+
+          const newCases = Array.from({ length: 7 }, () => Math.floor(Math.random() * 200) + 100);
+          const activeCases = Array.from({ length: 7 }, () => Math.floor(Math.random() * 1000) + 500);
+          const recoveredCases = Array.from({ length: 7 }, () => Math.floor(Math.random() * 150) + 50);
+
+          pandemicChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                  labels: labels,
+                  datasets: [
+                      {
+                          label: 'New Cases',
+                          data: newCases,
+                          borderColor: '#d32f2f',
+                          backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                          borderWidth: 2,
+                          tension: 0.3,
+                          fill: true
+                      },
+                      {
+                          label: 'Active Cases',
+                          data: activeCases,
+                          borderColor: '#1976d2',
+                          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                          borderWidth: 2,
+                          tension: 0.3,
+                          fill: true
+                      },
+                      {
+                          label: 'Recovered',
+                          data: recoveredCases,
+                          borderColor: '#388e3c',
+                          backgroundColor: 'rgba(56, 142, 60, 0.1)',
+                          borderWidth: 2,
+                          tension: 0.3,
+                          fill: true
+                      }
+                  ]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                      legend: {
+                          position: 'top',
+                      },
+                      tooltip: {
+                          mode: 'index',
+                          intersect: false,
+                      }
+                  },
+                  interaction: {
+                      mode: 'nearest',
+                      intersect: false,
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      }
+
+      // Generate alerts list
+      function generateAlertsList() {
+          const alertTypes = [
+              { type: 'critical', icon: 'fas fa-exclamation-triangle' },
+              { type: 'high', icon: 'fas fa-ambulance' },
+              { type: 'medium', icon: 'fas fa-heartbeat' },
+              { type: 'handled', icon: 'fas fa-check-circle' }
+          ];
+
+          alertsList = [
+              {
+                  id: 'EM-2025-0423',
+                  title: 'Multi-Vehicle Accident',
+                  location: 'Highway 101, Mile 245',
+                  time: '10:23 AM',
+                  type: alertTypes[0],
+                  details: 'Multi-vehicle collision with multiple injuries reported. 3 ambulances requested.'
+              },
+              {
+                  id: 'EM-2025-0422',
+                  title: 'Cardiac Emergency',
+                  location: '421 Oak Street',
+                  time: '10:15 AM',
+                  type: alertTypes[1],
+                  details: '65-year-old male reporting chest pain and difficulty breathing.'
+              },
+              {
+                  id: 'EM-2025-0421',
+                  title: 'Respiratory Distress',
+                  location: '117 Pine Avenue',
+                  time: '10:04 AM',
+                  type: alertTypes[1],
+                  details: '32-year-old female with history of asthma reporting severe breathing difficulty.'
+              },
+              {
+                  id: 'EM-2025-0420',
+                  title: 'Building Fire',
+                  location: 'Downtown District',
+                  time: '9:47 AM',
+                  type: alertTypes[0],
+                  details: 'Commercial building fire reported. Fire department dispatched. Possible evacuation needed.'
+              },
+              {
+                  id: 'EM-2025-0419',
+                  title: 'Workplace Injury',
+                  location: 'Industrial Zone',
+                  time: '9:32 AM',
+                  type: alertTypes[2],
+                  details: 'Worker with severe laceration to arm. Bleeding controlled but requires medical attention.'
+              },
+              {
+                  id: 'EM-2025-0418',
+                  title: 'Fracture Injury',
+                  location: 'Downtown Park',
+                  time: '9:15 AM',
+                  type: alertTypes[3],
+                  details: 'Child with suspected arm fracture. Parents transporting to nearest hospital.'
+              }
+          ];
+
+          renderAlertsList();
+      }
+
+      // Render alerts list to DOM
+      function renderAlertsList() {
+          const alertList = document.getElementById('alertList');
+          if (!alertList) return;
+
+          alertList.innerHTML = '';
+
+          alertsList.slice(0, 5).forEach(alert => {
+              const li = document.createElement('li');
+              li.className = alert.type.type;
+              li.setAttribute('data-id', alert.id);
+
+              li.innerHTML = `
+          <div class="alert-icon"><i class="${alert.type.icon}"></i></div>
+          <div class="alert-details">
+            <h4>${alert.title}</h4>
+            <p>${alert.location}</p>
+            <span class="alert-time">${alert.time}</span>
+          </div>
+          <div class="alert-actions">
+            ${alert.type.type !== 'handled' ? '<button class="respond-btn"><i class="fas fa-reply"></i> Respond</button>' : '<span class="status-badge">Handled</span>'}
+          </div>
+        `;
+
+              alertList.appendChild(li);
+
+              // Add click event for response button
+              if (alert.type.type !== 'handled') {
+                  const respondBtn = li.querySelector('.respond-btn');
+                  respondBtn.addEventListener('click', () => {
+                      openResponseModal(alert.title, alert.type.type, alert.id);
+                  });
+              }
+          });
+      }
+
+      // Generate hospital capacity data
+      function generateHospitalsList() {
+          const hospitalNames = [
+              'Central Hospital',
+              'Mercy Medical Center',
+              'University Hospital',
+              'Children\'s Hospital',
+              'Veterans Hospital',
+              'County General',
+              'Memorial Hospital',
+              'St. John\'s Medical'
+          ];
+
+          hospitalsList = hospitalNames.map(name => {
+              const beds = Math.floor(Math.random() * 30) + 20;
+              const bedsAvailable = Math.floor(Math.random() * beds);
+              const icu = Math.floor(Math.random() * 10) + 5;
+              const icuAvailable = Math.floor(Math.random() * icu);
+
+              return {
+                  name,
+                  beds,
+                  bedsAvailable,
+                  icu,
+                  icuAvailable,
+                  status: bedsAvailable < 5 ? 'critical' : bedsAvailable < 10 ? 'warning' : 'good'
+              };
+          });
+
+          renderHospitalsList();
+      }
+
+      // Render hospitals list to DOM
+      function renderHospitalsList() {
+          const hospitalGrid = document.getElementById('hospitalGrid');
+          if (!hospitalGrid) return;
+
+          hospitalGrid.innerHTML = '';
+
+          hospitalsList.forEach(hospital => {
+              const card = document.createElement('div');
+              card.className = 'hospital-card';
+
+              card.innerHTML = `
+          <h3 class="hospital-name">${hospital.name}</h3>
+          <div class="hospital-status">
+            <div class="status-item">
+              <span>Beds:</span>
+              <span class="status-value ${hospital.bedsAvailable < 5 ? 'status-critical' : hospital.bedsAvailable < 10 ? 'status-warning' : 'status-good'}">
+                ${hospital.bedsAvailable}/${hospital.beds}
+              </span>
+            </div>
+            <div class="status-item">
+              <span>ICU:</span>
+              <span class="status-value ${hospital.icuAvailable < 2 ? 'status-critical' : hospital.icuAvailable < 4 ? 'status-warning' : 'status-good'}">
+                ${hospital.icuAvailable}/${hospital.icu}
+              </span>
+            </div>
+          </div>
+        `;
+
+              hospitalGrid.appendChild(card);
+          });
+      }
+
+      // Initialize tabs
+      function initTabs() {
+          const tabs = document.querySelectorAll('.comm-tab');
+          if (!tabs.length) return;
+
+          tabs.forEach(tab => {
+              tab.addEventListener('click', () => {
+                  // Remove active class from all tabs and content
+                  document.querySelectorAll('.comm-tab').forEach(t => t.classList.remove('active'));
+                  document.querySelectorAll('.communication-content').forEach(c => c.classList.remove('active'));
+
+                  // Add active class to clicked tab
+                  tab.classList.add('active');
+
+                  // Show corresponding content
+                  const target = tab.getAttribute('data-target');
+                  document.getElementById(target).classList.add('active');
+              });
+          });
+      }
+
+      // Show toast notification
+      function showToast(title, message, type = 'info', duration = 5000) {
+          const toastContainer = document.getElementById('toastContainer');
+          if (!toastContainer) return;
+
+          // Create toast element
+          const toast = document.createElement('div');
+          toast.className = `toast ${type}`;
+
+          // Get icon based on type
+          let iconClass;
+          switch (type) {
+              case 'success':
+                  iconClass = 'fas fa-check-circle';
+                  break;
+              case 'warning':
+                  iconClass = 'fas fa-exclamation-triangle';
+                  break;
+              case 'error':
+                  iconClass = 'fas fa-times-circle';
+                  break;
+              default:
+                  iconClass = 'fas fa-info-circle';
+          }
+
+          // Toast content
+          toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="${iconClass}"></i>
+        </div>
+        <div class="toast-content">
+          <h4 class="toast-title">${title}</h4>
+          <p class="toast-message">${message}</p>
+        </div>
+        <button class="toast-close">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+          // Add to container
+          toastContainer.appendChild(toast);
+
+          // Add close event
+          const closeBtn = toast.querySelector('.toast-close');
+          closeBtn.addEventListener('click', () => {
+              closeToast(toast);
+          });
+
+          // Auto close after duration
+          setTimeout(() => {
+              if (toastContainer.contains(toast)) {
+                  closeToast(toast);
+              }
+          }, duration);
+      }
+
+      // Close toast function
+      function closeToast(toast) {
+          toast.classList.add('fade-out');
+          setTimeout(() => {
+              const toastContainer = document.getElementById('toastContainer');
+              if (toastContainer && toastContainer.contains(toast)) {
+                  toastContainer.removeChild(toast);
+              }
+          }, 300);
+      }
+
+      // Initialize modals
+      function initModals() {
+          // Regular modal
+          const modalOverlay = document.getElementById('modalOverlay');
+          const closeModal = document.getElementById('closeModal');
+          const cancelModal = document.getElementById('cancelModal');
+          const modal = document.getElementById('modal');
+
+          if (modalOverlay && closeModal && cancelModal && modal) {
+              // Close modal when clicking close button
+              closeModal.addEventListener('click', () => {
+                  modalOverlay.classList.remove('active');
+              });
+
+              // Close modal when clicking cancel button
+              cancelModal.addEventListener('click', () => {
+                  modalOverlay.classList.remove('active');
+              });
+
+              // Close modal when clicking outside
+              modalOverlay.addEventListener('click', (e) => {
+                  if (e.target === modalOverlay) {
+                      modalOverlay.classList.remove('active');
+                  }
+              });
+          }
+
+          // Response modal
+          const responseModalOverlay = document.getElementById('responseModalOverlay');
+          const closeResponseModal = document.getElementById('closeResponseModal');
+          const cancelResponse = document.getElementById('cancelResponse');
+          const confirmResponse = document.getElementById('confirmResponse');
+
+          if (responseModalOverlay && closeResponseModal && cancelResponse && confirmResponse) {
+              // Close modal when clicking close button
+              closeResponseModal.addEventListener('click', () => {
+                  responseModalOverlay.classList.remove('active');
+              });
+
+              // Close modal when clicking cancel button
+              cancelResponse.addEventListener('click', () => {
+                  responseModalOverlay.classList.remove('active');
+              });
+
+              // Handle response submission
+              confirmResponse.addEventListener('click', () => {
+                  handleResponseSubmission();
+                  responseModalOverlay.classList.remove('active');
+              });
+
+              // Close modal when clicking outside
+              responseModalOverlay.addEventListener('click', (e) => {
+                  if (e.target === responseModalOverlay) {
+                      responseModalOverlay.classList.remove('active');
+                  }
+              });
+          }
+      }
+
+      // Open response modal
+      function openResponseModal(title, type, id = '') {
+          const responseModalOverlay = document.getElementById('responseModalOverlay');
+          const responseModalTitle = document.getElementById('responseModalTitle');
+          const emergencyTypeSelect = document.getElementById('emergencyType');
+          const responseLocationInput = document.getElementById('responseLocation');
+          const responseLevelSelect = document.getElementById('responseLevel');
+
+          if (responseModalOverlay && responseModalTitle && emergencyTypeSelect && responseLocationInput && responseLevelSelect) {
+              // Set modal title
+              responseModalTitle.textContent = `Respond to ${title}`;
+
+              // Pre-fill form if available
+              if (id) {
+                  const alert = alertsList.find(a => a.id === id);
+                  if (alert) {
+                      responseLocationInput.value = alert.location;
+
+                      // Set appropriate emergency type
+                      if (alert.title.includes('Cardiac')) {
+                          emergencyTypeSelect.value = 'medical';
+                      } else if (alert.title.includes('Accident')) {
+                          emergencyTypeSelect.value = 'trauma';
+                      } else if (alert.title.includes('Fire')) {
+                          emergencyTypeSelect.value = 'fire';
+                      }
+
+                      // Set appropriate response level based on alert type
+                      if (alert.type.type === 'critical') {
+                          responseLevelSelect.value = '4';
+                      } else if (alert.type.type === 'high') {
+                          responseLevelSelect.value = '3';
+                      } else if (alert.type.type === 'medium') {
+                          responseLevelSelect.value = '2';
+                      } else {
+                          responseLevelSelect.value = '1';
+                      }
+                  }
+              } else {
+                  // Clear form
+                  responseLocationInput.value = '';
+                  // Set type based on emergencyType
+                  if (title.includes('Cardiac') || title.includes('Respiratory') || title.includes('Stroke')) {
+                      emergencyTypeSelect.value = 'medical';
+                  } else if (title.includes('Accident') || title.includes('Injury')) {
+                      emergencyTypeSelect.value = 'trauma';
+                  } else if (title.includes('Fire')) {
+                      emergencyTypeSelect.value = 'fire';
+                  } else {
+                      emergencyTypeSelect.value = 'other';
+                  }
+
+                  // Set response level based on type
+                  if (type === 'critical') {
+                      responseLevelSelect.value = '4';
+                  } else if (type === 'high') {
+                      responseLevelSelect.value = '3';
+                  } else if (type === 'medium') {
+                      responseLevelSelect.value = '2';
+                  } else {
+                      responseLevelSelect.value = '1';
+                  }
+              }
+
+              // Reset checkboxes
+              document.getElementById('notifyHospitals').checked = true;
+              document.getElementById('requestBackup').checked = false;
+              document.getElementById('activateProtocol').checked = false;
+
+              // Show modal
+              responseModalOverlay.classList.add('active');
+          }
+      }
+
+      // Handle response submission
+      function handleResponseSubmission() {
+          const emergencyType = document.getElementById('emergencyType').value;
+          const responseLevel = document.getElementById('responseLevel').value;
+          const location = document.getElementById('responseLocation').value;
+          const units = document.getElementById('responseUnits').value;
+          const eta = document.getElementById('responseETA').value;
+          const notifyHospitals = document.getElementById('notifyHospitals').checked;
+          const requestBackup = document.getElementById('requestBackup').checked;
+          const activateProtocol = document.getElementById('activateProtocol').checked;
+
+          // Create success message
+          let message = `Response dispatched to ${location}. `;
+          message += `${units} units en route with ETA of ${eta} minutes.`;
+
+          if (notifyHospitals) {
+              message += ' Nearby hospitals notified.';
+          }
+
+          if (requestBackup) {
+              message += ' Backup requested.';
+          }
+
+          if (activateProtocol) {
+              message += ' Emergency protocol activated.';
+          }
+
+          // Show success toast
+          showToast('Response Dispatched', message, 'success');
+
+          // Update stats to simulate response
+          updateEmergencyStats();
+      }
+
+      // Add global event listeners
+      function addGlobalEventListeners() {
+          // Allocate resources button
+          const allocateBtn = document.querySelector('.allocate-btn');
+          if (allocateBtn) {
+              allocateBtn.addEventListener('click', () => {
+                  showToast('Resources Allocated', 'Emergency resources have been allocated to high priority incidents', 'success');
+              });
+          }
+
+          // Deploy team button
+          const deployBtn = document.querySelector('.deploy-btn');
+          if (deployBtn) {
+              deployBtn.addEventListener('click', () => {
+                  openResponseModal('Team Deployment', 'high');
+              });
+          }
+
+          // Recall team button
+          const recallBtn = document.querySelector('.recall-btn');
+          if (recallBtn) {
+              recallBtn.addEventListener('click', () => {
+                  showToast('Team Recalled', 'Emergency response team has been recalled to base', 'info');
+                  updateTeamCounts(-1, 1);
+              });
+          }
+
+          // Rotate staff button
+          const rotateBtn = document.querySelector('.rotate-btn');
+          if (rotateBtn) {
+              rotateBtn.addEventListener('click', () => {
+                  showToast('Staff Rotation', 'Staff rotation schedule has been updated', 'info');
+              });
+          }
+
+          // Send broadcast button
+          const sendBroadcastBtn = document.querySelector('.send-broadcast');
+          if (sendBroadcastBtn) {
+              sendBroadcastBtn.addEventListener('click', () => {
+                  const broadcastMessage = document.getElementById('broadcastMessage');
+                  if (broadcastMessage && broadcastMessage.value.trim()) {
+                      // Add broadcast to list
+                      addBroadcast(broadcastMessage.value.trim());
+                      // Clear input
+                      broadcastMessage.value = '';
+                      // Show toast
+                      showToast('Broadcast Sent', 'Emergency broadcast has been sent to all selected recipients', 'success');
+                  }
+              });
+          }
+
+          // Refresh button
+          const refreshBtn = document.querySelector('.refresh-btn');
+          if (refreshBtn) {
+              refreshBtn.addEventListener('click', () => {
+                  refreshMap();
+                  showToast('Map Refreshed', 'Emergency location map has been refreshed with latest data', 'info');
+              });
+          }
+
+          // Report action buttons
+          const reportBtns = document.querySelectorAll('.report-btn');
+          reportBtns.forEach(btn => {
+              btn.addEventListener('click', function () {
+                  const action = this.textContent.includes('Download') ? 'downloaded' : 'shared';
+                  const reportTitle = this.closest('.report-card').querySelector('.report-header h3').textContent;
+                  showToast('Report Action', `Report "${reportTitle}" ${action} successfully`, 'success');
+              });
+          });
+      }
+
+      // Add new broadcast to list
+      function addBroadcast(message) {
+          const broadcastList = document.querySelector('.broadcast-list');
+          if (!broadcastList) return;
+
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          const li = document.createElement('li');
+          li.className = 'broadcast-item';
+
+          li.innerHTML = `
+        <span class="broadcast-time">${timeString}</span>
+        <span class="broadcast-message">${message}</span>
+      `;
+
+          // Insert at top of list
+          broadcastList.insertBefore(li, broadcastList.firstChild);
+      }
+
+      // Simulate emergencies
+      function simulateEmergencies() {
+          // 30% chance of new emergency every 30-60 seconds
+          setInterval(() => {
+              if (Math.random() > 0.7) {
+                  createRandomEmergency();
+              }
+          }, Math.floor(Math.random() * 30000) + 30000);
+      }
+
+      // Create random emergency
+      function createRandomEmergency() {
+          const emergencyType = emergencyTypes[Math.floor(Math.random() * emergencyTypes.length)];
+          const location = locations[Math.floor(Math.random() * locations.length)];
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          // Choose priority randomly weighted towards medium
+          const priorities = ['critical', 'high', 'high', 'medium', 'medium', 'medium'];
+          const priority = priorities[Math.floor(Math.random() * priorities.length)];
+
+          const alertTypes = [
+              { type: 'critical', icon: 'fas fa-exclamation-triangle' },
+              { type: 'high', icon: 'fas fa-ambulance' },
+              { type: 'medium', icon: 'fas fa-heartbeat' }
+          ];
+
+          const alertType = alertTypes.find(a => a.type === priority) || alertTypes[2];
+
+          // Generate ID
+          const id = `EM-2025-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+
+          // Create alert
+          const newAlert = {
+              id,
+              title: emergencyType,
+              location,
+              time: timeString,
+              type: alertType,
+              details: `New ${emergencyType.toLowerCase()} incident reported at ${location}.`
+          };
+
+          // Add to beginning of alerts list
+          alertsList.unshift(newAlert);
+
+          // Update DOM
+          renderAlertsList();
+
+          // Show toast
+          showToast(
+              'New Emergency Alert',
+              `${emergencyType} reported at ${location}`,
+              'warning'
+          );
+
+          // Update emergency count in alert banner
+          updateEmergencyCount(1);
+      }
+
+      // Update emergency count in alert banner
+      function updateEmergencyCount(change = 0) {
+          const alertBannerText = document.querySelector('#alertBanner span');
+          if (!alertBannerText) return;
+
+          // Extract current count
+          const currentText = alertBannerText.textContent;
+          const currentCount = parseInt(currentText.match(/\d+/)[0]);
+
+          // Update count
+          const newCount = currentCount + change;
+          alertBannerText.textContent = `${newCount} Critical Emergencies Active`;
+      }
+
+      // Update team counts
+      function updateTeamCounts(deployedChange = 0, availableChange = 0) {
+          const teamCounts = document.querySelectorAll('.team-count');
+          if (teamCounts.length < 2) return;
+
+          const availableCount = parseInt(teamCounts[0].textContent);
+          const deployedCount = parseInt(teamCounts[1].textContent);
+
+          teamCounts[0].textContent = availableCount + availableChange;
+          teamCounts[1].textContent = deployedCount + deployedChange;
+      }
+
+      // Update emergency stats after response
+      function updateEmergencyStats() {
+          // Get current value
+          const statValue = document.querySelector('.stat-card.emergency .stat-value');
+          if (!statValue) return;
+
+          const currentValue = parseInt(statValue.textContent);
+
+          // Decrease by 1
+          statValue.textContent = currentValue - 1;
+
+          // Update emergency count in banner
+          updateEmergencyCount(-1);
+
+          // Update team counts
+          updateTeamCounts(-1, 1);
+
+          // Mark random alert as handled
+          markRandomAlertHandled();
+      }
+
+      // Mark random alert as handled
+      function markRandomAlertHandled() {
+          // Find alerts that are not already handled
+          const activeAlerts = alertsList.filter(alert => alert.type.type !== 'handled');
+          if (activeAlerts.length === 0) return;
+
+          // Pick a random active alert
+          const randomAlert = activeAlerts[Math.floor(Math.random() * activeAlerts.length)];
+
+          // Mark as handled
+          const index = alertsList.findIndex(alert => alert.id === randomAlert.id);
+          if (index !== -1) {
+              alertsList[index].type = { type: 'handled', icon: 'fas fa-check-circle' };
+
+              // Update DOM
+              renderAlertsList();
+          }
+      }
+
+      // Refresh data functions
+      function refreshData() {
+          // Refresh map occasionally
+          if (Math.random() > 0.7) {
+              refreshMap();
+          }
+
+          // Update hospital data occasionally
+          if (Math.random() > 0.6) {
+              updateHospitalData();
+          }
+
+          // Update pandemic chart occasionally
+          if (Math.random() > 0.8) {
+              updatePandemicChart();
+          }
+      }
+
+      // Refresh map
+      function refreshMap() {
+          // Re-add markers to simulate refresh
+          addEmergencyMarkers();
+      }
+
+      // Update hospital data
+      function updateHospitalData() {
+          // Update availability numbers slightly
+          hospitalsList = hospitalsList.map(hospital => {
+              let bedsChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+              let icuChange = Math.floor(Math.random() * 2) - 1; // -1, 0, or 1
+
+              let bedsAvailable = Math.max(0, Math.min(hospital.beds, hospital.bedsAvailable + bedsChange));
+              let icuAvailable = Math.max(0, Math.min(hospital.icu, hospital.icuAvailable + icuChange));
+
+              return {
+                  ...hospital,
+                  bedsAvailable,
+                  icuAvailable,
+                  status: bedsAvailable < 5 ? 'critical' : bedsAvailable < 10 ? 'warning' : 'good'
+              };
+          });
+
+          // Update DOM
+          renderHospitalsList();
+      }
+
+      // Update pandemic chart
+      function updatePandemicChart() {
+          if (!pandemicChart) return;
+
+          // Update last data point slightly
+          const datasets = pandemicChart.data.datasets;
+
+          datasets.forEach(dataset => {
+              const lastValue = dataset.data[dataset.data.length - 1];
+              const change = Math.floor(Math.random() * 21) - 10; // -10 to 10
+              dataset.data[dataset.data.length - 1] = Math.max(0, lastValue + change);
+          });
+
+          pandemicChart.update();
+      }
+  </script>
+</body>
+
+</html>
