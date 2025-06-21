@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disaster & Pandemic Alert System</title>
+    <meta name="description"
+        content="Get information about disasters and pandemics, safety measures, and real-time alerts" />
+        <link rel="stylesheet" href="/css/firstPage.css" />
+        <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f72585;
+            --secondary-dark: #e91c7d;
+            --dark: #161a2b;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --white: #ffffff;
+            --success: #38b000;
+            --warning: #ffb700;
+            --danger: #ff5400;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f8f9fa;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn.primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn.secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn.secondary:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn.small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+        }
+
+        /* Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            z-index: 10;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a.active::after,
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        .hamburger .line {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark);
+            margin: 5px;
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        /* Hero section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(247, 37, 133, 0.1) 100%);
+            margin-top: 0;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-content .btn {
+            margin: 0 0.5rem 1rem;
+        }
+
+        /* Section styling */
+        section {
+            padding: 5rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin: 0.5rem auto 0;
+        }
+
+        /* Disasters section */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+        }
+
+        .card-icon i {
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+
+        .card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        /* Symptoms section */
+        .symptoms-section {
+            background-color: #f1f4fd;
+        }
+
+        .symptom-checker {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .checker-intro h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .checker-intro p {
+            margin-bottom: 2rem;
+            color: var(--gray);
+        }
+
+        .symptom-questionnaire {
+            position: relative;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question-container h4 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .option-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .option-btn.selected {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .results-content {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--gray);
+            margin-right: 0.5rem;
+        }
+
+        .treatment-recommendations {
+            background-color: rgba(56, 176, 0, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .treatment-recommendations h5 {
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        .treatment-recommendations ul {
+            margin-left: 1.5rem;
+        }
+
+        .treatment-recommendations li {
+            margin-bottom: 0.5rem;
+        }
+
+        .treatment-recommendations .disclaimer {
+            font-style: italic;
+            color: var(--gray);
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Safety section */
+        .safety-tabs {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tab-headers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--white);
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .tab {
+            display: none;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        .safety-list {
+            list-style: none;
+        }
+
+        .safety-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .safety-list i {
+            color: var(--success);
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            min-width: 1.5rem;
+        }
+
+        /* Alerts section */
+        .alerts-section {
+            background-color: #f1f4fd;
+        }
+
+        .alerts-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+
+        .alert-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .location-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .location-selector input {
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .alert-filter select {
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .alerts-list {
+            min-height: 200px;
+        }
+
+        .alert-item {
+            padding: 1rem;
+            border-left: 4px solid;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .alert-item.pandemic {
+            border-color: var(--secondary);
+        }
+
+        .alert-item.weather {
+            border-color: var(--warning);
+        }
+
+        .alert-item.geological {
+            border-color: var(--danger);
+        }
+
+        .alert-title {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alert-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .alert-message {
+            color: var(--gray);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 10vh auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .modal-body h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .symptom-list,
+        .prevention-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .symptom-list li,
+        .prevention-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .symptom-list li:before,
+        .prevention-list li:before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .footer-links h3,
+        .footer-resources h3,
+        .footer-subscribe h3 {
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-links h3::after,
+        .footer-resources h3::after,
+        .footer-subscribe h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--secondary);
+        }
+
+        footer ul {
+            list-style: none;
+        }
+
+        footer ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: #c2c7d0;
+            transition: var(--transition);
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        .footer-subscribe p {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .subscribe-form {
+            display: flex;
+        }
+
+        .subscribe-form input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        }
+
+        .subscribe-form .btn {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            color: #c2c7d0;
+        }
+
+        .disclaimer {
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Awareness Section with Pagination */
+        .awareness-section {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(247, 37, 133, 0.05) 100%);
+            padding: 5rem 2rem;
+        }
+
+        .awareness-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .awareness-content {
+            position: relative;
+        }
+
+        .awareness-slides {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .awareness-slide {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .awareness-slide.active {
+            display: block;
+        }
+
+        .slide-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .slide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-text {
+            padding: 2rem;
+        }
+
+        .slide-text h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .slide-text ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .slide-text li {
+            margin-bottom: 0.5rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .pagination-arrow {
+            background: var(--white);
+            border: 1px solid var(--light-gray);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-arrow:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .pagination-indicators {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .indicator.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background-color: var(--white);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 2rem;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 1rem 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+
+            .card-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .alert-controls {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tab-headers {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .subscribe-form {
+                flex-direction: column;
+            }
+
+            .subscribe-form input {
+                border-radius: var(--border-radius);
+                margin-bottom: 0.5rem;
+            }
+
+            .subscribe-form .btn {
+                width: 100%;
+                border-radius: var(--border-radius);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .slide-content {
+                flex-direction: row;
+            }
+
+            .slide-image {
+                width: 50%;
+                height: auto;
+            }
+
+            .slide-text {
+                width: 50%;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="logo" onclick="window.location.href='/'">
+        <img src="/images/logo.png" alt="Pandemic Response Logo" class="logo-img" />
+      </div>
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-links" id="sidebar-links">
+          <a href="/" class="sidebar-link"
+            ><i class="fa-solid fa-home"></i> Home</a
+          >
+          <a href="/firstPage" class="sidebar-link"
+            ><i class="fa-solid fa-virus"></i> Dashboard</a
+          >
+          <a href="/pandamic" class="sidebar-link"
+            ><i class="fa-solid fa-virus"></i> Live Pandemic Stats</a
+          >
+          <a href="/request" class="sidebar-link"
+            ><i class="fa-solid fa-box-open"></i> Need Resources</a
+          >
+          <a href="/map" class="sidebar-link"
+            ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+          >
+          <a href="/stats" class="sidebar-link"
+            ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+          >
+          <a href="/organizations" class="sidebar-link"
+            ><i class="fa-solid fa-building"></i> Organizations</a
+          >
+          <a href="/org-dashboard" class="sidebar-link"
+            ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+          >
+          <a href="/user-dashboard" class="sidebar-link"
+            ><i class="fa-solid fa-user"></i> User Dashboard</a
+          >
+          <a href="/alerts" class="sidebar-link"
+        ><i class="fa-solid fa-alert"></i> Alerts</a
+      >
+          <a href="/profile" class="sidebar-link"
+            ><i class="fa-solid fa-id-card"></i> Profile</a
+          >
+        </div>
+        <div class="user-profile">
+          <img
+            src="/default-user.png"
+            alt="User Photo"
+            id="user-photo"
+            class="user-photo"
+            onclick="toggleSidebarMobile()"
+          />
+          <div class="user-info">
+            <span id="user-name">User Name</span>
+            <span id="user-email">user@example.com</span>
+          </div>
+          <button class="profile-btn" onclick="window.location.href='/profile'">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-bars mobile-hamburger"></i>
+      </div>
+    <header>
+        <nav>
+            <!-- <div class="logo">
+                <i class="fas fa-shield-virus"></i>
+                <h1>SafeGuard</h1>
+            </div> -->
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#disasters">Disasters</a></li>
+                <li><a href="#symptoms">Symptoms</a></li>
+                <li><a href="#safety">Safety</a></li>
+                <li><a href="#alerts">Alerts</a></li>
+            </ul>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Stay Informed, Stay Safe</h1>
+            <p>Learn about common disasters and pandemics, recognize symptoms, and discover safety measures to protect
+                yourself and your loved ones.</p>
+            <button class="btn primary" onclick="scrollToSection('disasters')">Explore Disasters</button>
+            <button class="btn secondary" onclick="scrollToSection('symptoms')">Check Symptoms</button>
+        </div>
+    </section>
+
+    <section id="disasters" class="disasters-section">
+        <h2 class="section-title">Common Disasters & Pandemics</h2>
+        <div class="card-container">
+            <div class="card" data-disaster="covid19">
+                <div class="card-icon"><i class="fas fa-virus"></i></div>
+                <h3>COVID-19</h3>
+                <p>A respiratory illness caused by the SARS-CoV-2 virus that spread worldwide from 2019.</p>
+                <button class="btn small" onclick="showDetails('covid19')">Learn More</button>
+            </div>
+            <div class="card" data-disaster="flu">
+                <div class="card-icon"><i class="fas fa-head-side-cough"></i></div>
+                <h3>Influenza</h3>
+                <p>A highly contagious respiratory infection that can cause seasonal epidemics.</p>
+                <button class="btn small" onclick="showDetails('flu')">Learn More</button>
+            </div>
+            <div class="card" data-disaster="earthquake">
+                <div class="card-icon"><i class="fas fa-house-damage"></i></div>
+                <h3>Earthquake</h3>
+                <p>Sudden ground shaking caused by the movement of tectonic plates under Earth's surface.</p>
+                <button class="btn small" onclick="showDetails('earthquake')">Learn More</button>
+            </div>
+            <div class="card" data-disaster="flood">
+                <div class="card-icon"><i class="fas fa-water"></i></div>
+                <h3>Flood</h3>
+                <p>Overflow of water that submerges usually dry land, often due to heavy rainfall or storms.</p>
+                <button class="btn small" onclick="showDetails('flood')">Learn More</button>
+            </div>
+            <div class="card" data-disaster="hurricane">
+                <div class="card-icon"><i class="fas fa-wind"></i></div>
+                <h3>Hurricane</h3>
+                <p>Violent tropical storm with high winds, heavy rainfall, and potential storm surges.</p>
+                <button class="btn small" onclick="showDetails('hurricane')">Learn More</button>
+            </div>
+            <div class="card" data-disaster="wildfire">
+                <div class="card-icon"><i class="fas fa-fire"></i></div>
+                <h3>Wildfire</h3>
+                <p>Uncontrolled fire that spreads rapidly through vegetation in rural or forest areas.</p>
+                <button class="btn small" onclick="showDetails('wildfire')">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="symptoms" class="symptoms-section">
+        <h2 class="section-title">Symptom Checker</h2>
+        <div class="symptom-checker">
+            <div class="checker-intro">
+                <h3>Check Your Symptoms</h3>
+                <p>Answer a series of related questions to help identify potential issues. This is not a substitute for
+                    professional medical advice.</p>
+            </div>
+
+            <div class="symptom-questionnaire">
+                <div class="question-container active" id="question-1">
+                    <h4>Question 1: How are you feeling overall?</h4>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectOption(1, 'feeling', 'Fine')">Fine, just
+                            checking</button>
+                        <button class="option-btn" onclick="selectOption(1, 'feeling', 'Slightly unwell')">Slightly
+                            unwell</button>
+                        <button class="option-btn" onclick="selectOption(1, 'feeling', 'Very sick')">Very sick</button>
+                        <button class="option-btn" onclick="selectOption(1, 'feeling', 'Emergency')">I need emergency
+                            help</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-2">
+                    <h4>Question 2: What are your main symptoms?</h4>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Respiratory')">Respiratory
+                            issues (cough, breathing difficulty)</button>
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Digestive')">Digestive
+                            issues (nausea, vomiting, diarrhea)</button>
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Neurological')">Neurological
+                            issues (headache, dizziness)</button>
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Skin')">Skin issues (rash,
+                            irritation)</button>
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Pain')">Pain (muscle, joint,
+                            etc.)</button>
+                        <button class="option-btn" onclick="selectOption(2, 'mainSymptom', 'Fever')">Fever</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-respiratory">
+                    <h4>Respiratory Symptoms:</h4>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectOption(3, 'respiratoryDetail', 'Dry cough')">Dry
+                            cough</button>
+                        <button class="option-btn" onclick="selectOption(3, 'respiratoryDetail', 'Wet cough')">Wet cough
+                            with phlegm</button>
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'respiratoryDetail', 'Shortness of breath')">Shortness of
+                            breath</button>
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'respiratoryDetail', 'Wheezing')">Wheezing</button>
+                        <button class="option-btn" onclick="selectOption(3, 'respiratoryDetail', 'Sore throat')">Sore
+                            throat</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-digestive">
+                    <h4>Digestive Symptoms:</h4>
+                    <div class="options-container">
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'digestiveDetail', 'Nausea')">Nausea</button>
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'digestiveDetail', 'Vomiting')">Vomiting</button>
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'digestiveDetail', 'Diarrhea')">Diarrhea</button>
+                        <button class="option-btn"
+                            onclick="selectOption(3, 'digestiveDetail', 'Abdominal pain')">Abdominal pain</button>
+                        <button class="option-btn" onclick="selectOption(3, 'digestiveDetail', 'Loss of appetite')">Loss
+                            of appetite</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-duration">
+                    <h4>Question 3: How long have you been experiencing these symptoms?</h4>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectOption(4, 'duration', 'Today')">Just started
+                            today</button>
+                        <button class="option-btn" onclick="selectOption(4, 'duration', '2-3 days')">2-3 days</button>
+                        <button class="option-btn" onclick="selectOption(4, 'duration', '4-7 days')">4-7 days</button>
+                        <button class="option-btn" onclick="selectOption(4, 'duration', 'Week+')">More than a
+                            week</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-severity">
+                    <h4>Question 4: Rate the severity of your symptoms:</h4>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectOption(5, 'severity', 'Mild')">Mild - Can perform
+                            daily activities</button>
+                        <button class="option-btn" onclick="selectOption(5, 'severity', 'Moderate')">Moderate -
+                            Difficult to perform daily activities</button>
+                        <button class="option-btn" onclick="selectOption(5, 'severity', 'Severe')">Severe - Cannot
+                            perform daily activities</button>
+                    </div>
+                </div>
+
+                <div class="question-container" id="question-results">
+                    <h4>Your Symptom Assessment Results</h4>
+                    <div id="symptom-results-content" class="results-content">
+                        <!-- Results will be dynamically inserted here -->
+                    </div>
+                    <div class="treatment-recommendations" id="treatment-recommendations">
+                        <!-- Treatment recommendations will be dynamically inserted here -->
+                    </div>
+                    <button class="btn primary" onclick="resetSymptomChecker()">Start Over</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="safety" class="safety-section">
+        <h2 class="section-title">Safety Measures</h2>
+        <div class="safety-tabs">
+            <div class="tab-headers">
+                <button class="tab-btn active" data-tab="pandemic">Pandemic</button>
+                <button class="tab-btn" data-tab="earthquake">Earthquake</button>
+                <button class="tab-btn" data-tab="flood">Flood</button>
+                <button class="tab-btn" data-tab="hurricane">Hurricane</button>
+                <button class="tab-btn" data-tab="wildfire">Wildfire</button>
+            </div>
+            <div class="tab-content">
+                <div class="tab active" id="pandemic-tab">
+                    <h3>Pandemic Safety</h3>
+                    <ul class="safety-list">
+                        <li><i class="fas fa-hands-wash"></i> Wash hands frequently with soap and water for at least 20
+                            seconds</li>
+                        <li><i class="fas fa-head-side-mask"></i> Wear a mask in crowded public spaces</li>
+                        <li><i class="fas fa-people-arrows"></i> Maintain physical distance (6 feet/2 meters) from
+                            others</li>
+                        <li><i class="fas fa-pump-medical"></i> Use hand sanitizer when soap and water aren't available
+                        </li>
+                        <li><i class="fas fa-house-user"></i> Stay home if feeling unwell</li>
+                        <li><i class="fas fa-syringe"></i> Get vaccinated when eligible</li>
+                        <li><i class="fas fa-box-tissue"></i> Cover coughs and sneezes with a tissue or elbow</li>
+                    </ul>
+                </div>
+                <div class="tab" id="earthquake-tab">
+                    <h3>Earthquake Safety</h3>
+                    <ul class="safety-list">
+                        <li><i class="fas fa-table"></i> Drop, cover, and hold on under sturdy furniture</li>
+                        <li><i class="fas fa-door-open"></i> Stay away from windows, outside doors, and walls</li>
+                        <li><i class="fas fa-building"></i> If outdoors, move to an open area away from buildings</li>
+                        <li><i class="fas fa-car-side"></i> If in a vehicle, pull over safely away from buildings and
+                            trees</li>
+                        <li><i class="fas fa-fire-extinguisher"></i> After shaking stops, check for fires or gas leaks
+                        </li>
+                        <li><i class="fas fa-toolbox"></i> Have an emergency kit prepared</li>
+                        <li><i class="fas fa-clipboard-list"></i> Create a family emergency plan</li>
+                    </ul>
+                </div>
+                <div class="tab" id="flood-tab">
+                    <h3>Flood Safety</h3>
+                    <ul class="safety-list">
+                        <li><i class="fas fa-cloud-showers-heavy"></i> Monitor weather reports and flood warnings</li>
+                        <li><i class="fas fa-level-up-alt"></i> Move to higher ground if flooding threatens</li>
+                        <li><i class="fas fa-water"></i> Never walk, swim, or drive through flood waters</li>
+                        <li><i class="fas fa-gas-pump"></i> Turn off utilities at main switches if instructed</li>
+                        <li><i class="fas fa-battery-full"></i> Keep emergency supplies ready including water</li>
+                        <li><i class="fas fa-broadcast-tower"></i> Have a battery-powered radio for updates</li>
+                        <li><i class="fas fa-route"></i> Know evacuation routes in your area</li>
+                    </ul>
+                </div>
+                <div class="tab" id="hurricane-tab">
+                    <h3>Hurricane Safety</h3>
+                    <ul class="safety-list">
+                        <li><i class="fas fa-home"></i> Secure your home: board windows and secure outdoor items</li>
+                        <li><i class="fas fa-gas-pump"></i> Fill your vehicle's gas tank and get extra fuel for
+                            generators</li>
+                        <li><i class="fas fa-shopping-basket"></i> Stock up on non-perishable food and water</li>
+                        <li><i class="fas fa-first-aid"></i> Prepare emergency medical supplies and prescriptions</li>
+                        <li><i class="fas fa-charging-station"></i> Charge electronic devices fully</li>
+                        <li><i class="fas fa-map-marked-alt"></i> Know your evacuation zone and route</li>
+                        <li><i class="fas fa-battery-full"></i> Have battery-powered flashlights and radio ready</li>
+                    </ul>
+                </div>
+                <div class="tab" id="wildfire-tab">
+                    <h3>Wildfire Safety</h3>
+                    <ul class="safety-list">
+                        <li><i class="fas fa-bell"></i> Stay alert to emergency notifications and evacuation orders</li>
+                        <li><i class="fas fa-car"></i> Keep your vehicle fueled and ready for evacuation</li>
+                        <li><i class="fas fa-map-marked-alt"></i> Know multiple evacuation routes from your neighborhood
+                        </li>
+                        <li><i class="fas fa-house-user"></i> Create defensible space around your home</li>
+                        <li><i class="fas fa-lungs"></i> Stay indoors to reduce smoke exposure</li>
+                        <li><i class="fas fa-filter"></i> Use air purifiers if available</li>
+                        <li><i class="fas fa-mask"></i> Wear an N95 mask outdoors during active fires</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="alerts" class="alerts-section">
+        <h2 class="section-title">Current Alerts</h2>
+        <div class="alerts-container">
+            <div class="alert-controls">
+                <div class="location-selector">
+                    <label for="location">Your Location:</label>
+                    <input type="text" id="location" placeholder="Enter city name">
+                    <button class="btn small" onclick="getAlerts()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="alert-filter">
+                    <label>Filter by:</label>
+                    <select id="alertFilter" onchange="filterAlerts()">
+                        <option value="all">All Alerts</option>
+                        <option value="pandemic">Pandemic</option>
+                        <option value="weather">Weather</option>
+                        <option value="geological">Geological</option>
+                    </select>
+                </div>
+            </div>
+            <div class="alerts-list" id="alertsList">
+                <p class="alert-message">Enter your location to see relevant alerts</p>
+                <!-- Alert items will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="awareness" class="awareness-section">
+        <h2 class="section-title">Awareness & Education</h2>
+        <div class="awareness-container">
+            <div class="awareness-content">
+                <div id="awareness-slides" class="awareness-slides">
+                    <!-- Slide 1 -->
+                    <div class="awareness-slide active" data-slide="1">
+                        <div class="slide-content">
+                            <div class="slide-image">
+                                <img src="https://placehold.co/600x400/4361ee/ffffff?text=Pandemic+Preparedness"
+                                    alt="Pandemic Preparedness">
+                            </div>
+                            <div class="slide-text">
+                                <h3>Pandemic Preparedness</h3>
+                                <p>Being prepared for a pandemic involves having essential supplies, creating an
+                                    emergency plan, and staying informed about local health guidelines.</p>
+                                <ul>
+                                    <li>Stock up on non-perishable food and water</li>
+                                    <li>Maintain a supply of necessary medications</li>
+                                    <li>Have personal protective equipment available</li>
+                                    <li>Create a communication plan with family members</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="awareness-slide" data-slide="2">
+                        <div class="slide-content">
+                            <div class="slide-image">
+                                <img src="https://placehold.co/600x400/f72585/ffffff?text=Disaster+Kits"
+                                    alt="Emergency Disaster Kits">
+                            </div>
+                            <div class="slide-text">
+                                <h3>Emergency Disaster Kits</h3>
+                                <p>Having a well-stocked emergency kit can be life-saving during disasters when
+                                    resources become scarce or inaccessible.</p>
+                                <ul>
+                                    <li>First aid supplies</li>
+                                    <li>Flashlights and batteries</li>
+                                    <li>Portable radio</li>
+                                    <li>Emergency blankets</li>
+                                    <li>Cash and important documents</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="awareness-slide" data-slide="3">
+                        <div class="slide-content">
+                            <div class="slide-image">
+                                <img src="https://placehold.co/600x400/38b000/ffffff?text=Community+Response"
+                                    alt="Community Response">
+                            </div>
+                            <div class="slide-text">
+                                <h3>Community Response Planning</h3>
+                                <p>Communities that plan and prepare together are more resilient during disasters. Learn
+                                    how to contribute to your local community's emergency preparedness.</p>
+                                <ul>
+                                    <li>Know your community evacuation routes</li>
+                                    <li>Participate in community emergency drills</li>
+                                    <li>Support vulnerable neighbors during emergencies</li>
+                                    <li>Learn about local emergency resources</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="awareness-slide" data-slide="4">
+                        <div class="slide-content">
+                            <div class="slide-image">
+                                <img src="https://placehold.co/600x400/ffb700/ffffff?text=Mental+Health"
+                                    alt="Mental Health">
+                            </div>
+                            <div class="slide-text">
+                                <h3>Mental Health During Disasters</h3>
+                                <p>Disasters and pandemics can take a significant toll on mental health. Learn
+                                    strategies for maintaining psychological well-being during crises.</p>
+                                <ul>
+                                    <li>Practice stress-reduction techniques</li>
+                                    <li>Maintain social connections safely</li>
+                                    <li>Limit exposure to distressing news</li>
+                                    <li>Know when and how to seek professional help</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination-controls">
+                    <button class="pagination-arrow prev" onclick="changeAwarenessSlide('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+
+                    <div class="pagination-indicators">
+                        <span class="indicator active" data-slide="1" onclick="goToAwarenessSlide(1)"></span>
+                        <span class="indicator" data-slide="2" onclick="goToAwarenessSlide(2)"></span>
+                        <span class="indicator" data-slide="3" onclick="goToAwarenessSlide(3)"></span>
+                        <span class="indicator" data-slide="4" onclick="goToAwarenessSlide(4)"></span>
+                    </div>
+
+                    <button class="pagination-arrow next" onclick="changeAwarenessSlide('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-shield-virus"></i>
+                <h2>SafeGuard</h2>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#disasters">Disasters</a></li>
+                    <li><a href="#symptoms">Symptoms</a></li>
+                    <li><a href="#safety">Safety</a></li>
+                    <li><a href="#alerts">Alerts</a></li>
+                </ul>
+            </div>
+            <div class="footer-resources">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://www.who.int/" target="_blank">World Health Organization</a></li>
+                    <li><a href="https://www.cdc.gov/" target="_blank">Centers for Disease Control</a></li>
+                    <li><a href="https://www.redcross.org/" target="_blank">Red Cross</a></li>
+                    <li><a href="https://www.ready.gov/" target="_blank">Ready.gov</a></li>
+                </ul>
+            </div>
+            <div class="footer-subscribe">
+                <h3>Stay Updated</h3>
+                <p>Subscribe to receive alerts and safety information directly to your email</p>
+                <div class="subscribe-form">
+                    <input type="email" placeholder="Your email address">
+                    <button class="btn small">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SafeGuard. All rights reserved. For educational purposes only.</p>
+            <p class="disclaimer">This website provides general information and is not a substitute for professional
+                medical or safety advice.</p>
+        </div>
+    </footer>
+    <script src="/js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navigation functionality
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const navLinkItems = document.querySelectorAll('.nav-links a');
+
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            navLinkItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    hamburger.classList.remove('active');
+                });
+            });
+
+            // Highlight active nav item based on scroll position
+            window.addEventListener('scroll', highlightNavOnScroll);
+
+            function highlightNavOnScroll() {
+                const scrollPosition = window.scrollY;
+
+                document.querySelectorAll('section').forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.clientHeight;
+                    const sectionId = section.getAttribute('id');
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        document.querySelectorAll('.nav-links a').forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Safety tabs functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabs = document.querySelectorAll('.tab');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabs.forEach(tab => tab.classList.remove('active'));
+
+                    button.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // Modal functionality
+            const modal = document.getElementById('detailsModal');
+            const closeModal = document.querySelector('.close-modal');
+
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Helper for scrolling to sections
+            window.scrollToSection = function (sectionId) {
+                const section = document.getElementById(sectionId);
+                const offsetTop = section.offsetTop;
+
+                window.scrollTo({
+                    top: offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            };
+        });
+
+        // Disaster details data
+        const disasterData = {
+            covid19: {
+                name: "COVID-19",
+                description: "COVID-19 is a respiratory disease caused by the SARS-CoV-2 virus. It was first identified in December 2019 in Wuhan, China, and has since spread globally, leading to the ongoing pandemic.",
+                symptoms: [
+                    "Fever or chills",
+                    "Cough",
+                    "Shortness of breath or difficulty breathing",
+                    "Fatigue",
+                    "Muscle or body aches",
+                    "Headache",
+                    "New loss of taste or smell",
+                    "Sore throat",
+                    "Congestion or runny nose",
+                    "Nausea or vomiting",
+                    "Diarrhea"
+                ],
+                prevention: [
+                    "Get vaccinated when available",
+                    "Wear a mask in crowded, indoor settings",
+                    "Maintain at least 6 feet distance from others",
+                    "Wash hands frequently with soap and water",
+                    "Use hand sanitizer with at least 60% alcohol",
+                    "Avoid touching your face",
+                    "Cover coughs and sneezes",
+                    "Clean and disinfect frequently touched surfaces",
+                    "Monitor your health daily"
+                ],
+                emergency: "Seek emergency medical care if you experience trouble breathing, persistent chest pain or pressure, confusion, inability to wake or stay awake, or bluish lips or face."
+            },
+            flu: {
+                name: "Influenza (Flu)",
+                description: "Influenza is a contagious respiratory illness caused by influenza viruses that infect the nose, throat, and sometimes the lungs. It can cause mild to severe illness, and at times can lead to death.",
+                symptoms: [
+                    "Fever or feeling feverish/chills",
+                    "Cough",
+                    "Sore throat",
+                    "Runny or stuffy nose",
+                    "Muscle or body aches",
+                    "Headaches",
+                    "Fatigue (tiredness)",
+                    "Some people may have vomiting and diarrhea"
+                ],
+                prevention: [
+                    "Get a yearly flu vaccine",
+                    "Avoid close contact with sick people",
+                    "Cover your nose and mouth when coughing or sneezing",
+                    "Wash hands frequently with soap and water",
+                    "Avoid touching your eyes, nose, and mouth",
+                    "Clean and disinfect surfaces that may be contaminated"
+                ],
+                emergency: "Seek emergency medical care if you experience difficulty breathing, persistent chest pain, confusion, severe muscle pain, or seizures."
+            },
+            earthquake: {
+                name: "Earthquake",
+                description: "An earthquake is a sudden, rapid shaking of the ground caused by the shifting of rocks deep underneath the earth's surface. Earthquakes can happen without warning and can result in injuries and extensive damage to property and infrastructure.",
+                symptoms: ["Not applicable"],
+                prevention: [
+                    "Identify safe places in each room of your home",
+                    "Practice drop, cover, and hold on drills",
+                    "Secure heavy furniture and appliances",
+                    "Store breakable items in low, closed cabinets",
+                    "Learn how to shut off utilities",
+                    "Have emergency supplies ready",
+                    "Create a family emergency communication plan"
+                ],
+                emergency: "During an earthquake: Drop, cover, and hold on. If indoors, stay there until the shaking stops. If outdoors, find a clear spot away from buildings, trees, and power lines."
+            },
+            flood: {
+                name: "Flood",
+                description: "Flooding is an overflow of water that submerges land that is usually dry. Floods occur when water overflows or inundates land that's normally dry. This can happen in a variety of ways, including excessive rainfall, rapid snowmelt, or failure of dams.",
+                symptoms: ["Not applicable"],
+                prevention: [
+                    "Know your area's flood risk",
+                    "Consider flood insurance",
+                    "Elevate electrical systems and appliances",
+                    "Install check valves in plumbing",
+                    "Construct barriers to prevent water",
+                    "Seal basement walls with waterproofing compounds",
+                    "Prepare an evacuation plan and emergency kit"
+                ],
+                emergency: "Move to higher ground immediately if there is a flood warning. Never walk, swim, or drive through flood waters. Just six inches of moving water can knock you down, and one foot of moving water can sweep your vehicle away."
+            },
+            hurricane: {
+                name: "Hurricane",
+                description: "Hurricanes are massive storm systems that form over warm ocean waters and move toward land. They can cause catastrophic damage from heavy rainfall, high winds, and storm surges (rising ocean levels).",
+                symptoms: ["Not applicable"],
+                prevention: [
+                    "Make an emergency plan",
+                    "Build an emergency kit",
+                    "Know your evacuation zone",
+                    "Strengthen your home (secure roof, trim trees, etc.)",
+                    "Purchase flood insurance",
+                    "Stock up on supplies before a storm warning",
+                    "Keep important documents in a waterproof container"
+                ],
+                emergency: "If ordered to evacuate, do so immediately. Stay informed about weather conditions. If not evacuating, stay indoors away from windows and keep a supply of food and water."
+            },
+            wildfire: {
+                name: "Wildfire",
+                description: "A wildfire is an uncontrolled fire that burns in wildland vegetation, often in rural areas. Wildfires can burn in forests, grasslands, savannas, and other ecosystems, and have been doing so for hundreds of millions of years.",
+                symptoms: ["Not applicable"],
+                prevention: [
+                    "Create defensible space around your home",
+                    "Use fire-resistant materials for home construction",
+                    "Keep gutters clean",
+                    "Keep flammable materials away from your house",
+                    "Have an evacuation plan",
+                    "Prepare an emergency kit",
+                    "Know multiple evacuation routes"
+                ],
+                emergency: "If ordered to evacuate, do so immediately. If trapped, call 911. Keep doors and windows closed but unlocked. Fill sinks and tubs with water."
+            }
+        };
+
+        // Symptom checker data
+        const diseaseSymptomsMap = {
+            "covid19": ["fever", "cough", "shortness_of_breath", "fatigue", "body_aches", "headache", "loss_of_taste", "sore_throat"],
+            "flu": ["fever", "cough", "sore_throat", "body_aches", "headache", "fatigue"],
+            "common_cold": ["cough", "sore_throat", "fatigue", "headache"],
+            "allergies": ["cough", "shortness_of_breath", "headache"],
+            "heatstroke": ["headache", "confusion", "body_aches"]
+        };
+
+        // Function to show disaster details in modal
+        window.showDetails = function (disasterId) {
+            const data = disasterData[disasterId];
+            if (!data) return;
+
+            const modalBody = document.getElementById('modalBody');
+
+            let content = `
+    <h2>${data.name}</h2>
+    <div class="modal-section">
+      <p>${data.description}</p>
+    </div>
+  `;
+
+            if (data.symptoms[0] !== "Not applicable") {
+                content += `
+      <div class="modal-section">
+        <h3>Common Symptoms</h3>
+        <ul class="symptom-list">
+          ${data.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+            }
+
+            content += `
+    <div class="modal-section">
+      <h3>Prevention & Safety</h3>
+      <ul class="prevention-list">
+        ${data.prevention.map(prevention => `<li>${prevention}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="modal-section">
+      <h3>Emergency Situations</h3>
+      <p>${data.emergency}</p>
+    </div>
+  `;
+
+            modalBody.innerHTML = content;
+            document.getElementById('detailsModal').style.display = 'block';
+        };
+
+        // New Symptom Checker Functionality
+        const userSymptoms = {
+            feeling: '',
+            mainSymptom: '',
+            respiratoryDetail: '',
+            digestiveDetail: '',
+            neurologicalDetail: '',
+            skinDetail: '',
+            painDetail: '',
+            feverDetail: '',
+            duration: '',
+            severity: ''
+        };
+
+        // Function for symptom checker option selection
+        window.selectOption = function (questionNum, category, value) {
+            userSymptoms[category] = value;
+
+            const currentQuestionContainer = document.querySelector('.question-container.active');
+            currentQuestionContainer.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            event.target.classList.add('selected');
+
+            setTimeout(() => {
+                currentQuestionContainer.classList.remove('active');
+
+                if (questionNum === 1) {
+                    if (value === 'Emergency') {
+                        showEmergencyResults();
+                        return;
+                    }
+                    document.getElementById('question-2').classList.add('active');
+                }
+                else if (questionNum === 2) {
+                    if (value === 'Respiratory') {
+                        document.getElementById('question-respiratory').classList.add('active');
+                    } else if (value === 'Digestive') {
+                        document.getElementById('question-digestive').classList.add('active');
+                    } else {
+                        document.getElementById('question-duration').classList.add('active');
+                    }
+                }
+                else if (questionNum === 3) {
+                    document.getElementById('question-duration').classList.add('active');
+                }
+                else if (questionNum === 4) {
+                    document.getElementById('question-severity').classList.add('active');
+                }
+                else if (questionNum === 5) {
+                    showSymptomResults();
+                }
+            }, 300);
+        };
+
+        function showEmergencyResults() {
+            document.getElementById('question-results').classList.add('active');
+
+            const resultsContent = document.getElementById('symptom-results-content');
+            resultsContent.innerHTML = `
+    <div class="emergency-message">
+      <h5><i class="fas fa-exclamation-triangle"></i> Emergency Medical Attention Needed</h5>
+      <p>Based on your selection, you may need immediate medical attention.</p>
+      <p><strong>Please call emergency services (911) or go to the nearest emergency room immediately.</strong></p>
+    </div>
+  `;
+
+            const recommendationsContent = document.getElementById('treatment-recommendations');
+            recommendationsContent.innerHTML = `
+    <h5>While Waiting for Emergency Services:</h5>
+    <ul>
+      <li>Remain calm and find a safe, comfortable position</li>
+      <li>Have someone stay with you if possible</li>
+      <li>Do not eat or drink anything unless instructed by medical professionals</li>
+      <li>Gather information about any medications you're taking to share with emergency responders</li>
+    </ul>
+    <p class="disclaimer">This is not a substitute for professional medical advice, diagnosis, or treatment.</p>
+  `;
+        }
+
+        function showSymptomResults() {
+            document.getElementById('question-results').classList.add('active');
+
+            const resultsContent = document.getElementById('symptom-results-content');
+            resultsContent.innerHTML = `
+    <h5>Based on your responses:</h5>
+    <div class="result-item">
+      <span class="result-label">Overall feeling:</span> ${userSymptoms.feeling}
+    </div>
+    <div class="result-item">
+      <span class="result-label">Main symptom category:</span> ${userSymptoms.mainSymptom} issues
+    </div>`;
+
+            if (userSymptoms.respiratoryDetail) {
+                resultsContent.innerHTML += `
+      <div class="result-item">
+        <span class="result-label">Respiratory detail:</span> ${userSymptoms.respiratoryDetail}
+      </div>`;
+            }
+
+            if (userSymptoms.digestiveDetail) {
+                resultsContent.innerHTML += `
+      <div class="result-item">
+        <span class="result-label">Digestive detail:</span> ${userSymptoms.digestiveDetail}
+      </div>`;
+            }
+
+            resultsContent.innerHTML += `
+    <div class="result-item">
+      <span class="result-label">Duration:</span> ${userSymptoms.duration}
+    </div>
+    <div class="result-item">
+      <span class="result-label">Severity:</span> ${userSymptoms.severity}
+    </div>`;
+
+            generateTreatmentRecommendations();
+        }
+
+        function generateTreatmentRecommendations() {
+            const recommendationsContent = document.getElementById('treatment-recommendations');
+            let recommendations = `<h5>Recommendations for Your Symptoms:</h5><ul>`;
+
+            recommendations += `<li>Rest and get plenty of fluids</li>`;
+
+            if (userSymptoms.mainSymptom === 'Respiratory') {
+                recommendations += `
+      <li>Use a humidifier or take steamy showers to ease congestion</li>
+      <li>Consider over-the-counter decongestants if appropriate</li>`;
+
+                if (userSymptoms.respiratoryDetail === 'Dry cough') {
+                    recommendations += `<li>Try honey and lemon in warm water to soothe your throat</li>`;
+                } else if (userSymptoms.respiratoryDetail === 'Shortness of breath') {
+                    recommendations += `<li>Practice deep breathing techniques in a comfortable position</li>
+      <li>Avoid exertion and keep windows open for fresh air</li>`;
+                }
+            }
+
+            else if (userSymptoms.mainSymptom === 'Digestive') {
+                recommendations += `
+      <li>Follow the BRAT diet (Bananas, Rice, Applesauce, Toast) temporarily</li>
+      <li>Avoid spicy, greasy foods, caffeine, and alcohol</li>`;
+
+                if (userSymptoms.digestiveDetail === 'Diarrhea') {
+                    recommendations += `<li>Stay hydrated with water and electrolyte solutions</li>`;
+                } else if (userSymptoms.digestiveDetail === 'Nausea') {
+                    recommendations += `<li>Try ginger tea or peppermint to calm your stomach</li>`;
+                }
+            }
+
+            else if (userSymptoms.mainSymptom === 'Fever') {
+                recommendations += `
+      <li>Take acetaminophen or ibuprofen as directed to reduce fever</li>
+      <li>Use lightweight clothing and bedding</li>
+      <li>Apply cool, damp cloths to your forehead and wrists</li>`;
+            }
+
+            if (userSymptoms.severity === 'Severe') {
+                recommendations += `<li>Consider consulting with a healthcare professional soon</li>`;
+            }
+
+            if (userSymptoms.duration === 'Week+') {
+                recommendations += `<li>Your symptoms have persisted for some time. Medical evaluation is recommended.</li>`;
+            }
+
+            recommendations += `</ul>
+    <p class="disclaimer">This is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a healthcare professional about your symptoms.</p>`;
+
+            recommendationsContent.innerHTML = recommendations;
+        }
+
+        // Function to reset the symptom checker
+        window.resetSymptomChecker = function () {
+            for (let key in userSymptoms) {
+                userSymptoms[key] = '';
+            }
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            document.querySelectorAll('.question-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            document.getElementById('question-1').classList.add('active');
+        };
+
+        // Function to check symptoms (legacy function)
+        window.checkSymptoms = function () {
+            const checkedSymptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(input => input.value);
+            const resultsContainer = document.querySelector('.results-container');
+            const noSymptomsMessage = document.querySelector('.no-symptoms');
+
+            if (checkedSymptoms.length === 0) {
+                noSymptomsMessage.style.display = 'block';
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            noSymptomsMessage.style.display = 'none';
+            resultsContainer.innerHTML = '';
+
+            const matches = {};
+
+            for (const [disease, symptoms] of Object.entries(diseaseSymptomsMap)) {
+                const matchingSymptoms = symptoms.filter(symptom => checkedSymptoms.includes(symptom));
+                if (matchingSymptoms.length > 0) {
+                    matches[disease] = {
+                        count: matchingSymptoms.length,
+                        percentage: Math.round((matchingSymptoms.length / symptoms.length) * 100)
+                    };
+                }
+            }
+
+            const sortedMatches = Object.entries(matches)
+                .sort((a, b) => b[1].percentage - a[1].percentage)
+                .filter(match => match[1].percentage >= 30);
+
+            if (sortedMatches.length === 0) {
+                resultsContainer.innerHTML = '<p>No significant matches found. Your symptoms may be related to other conditions.</p>';
+                return;
+            }
+
+            const diseaseNames = {
+                "covid19": "COVID-19",
+                "flu": "Influenza (Flu)",
+                "common_cold": "Common Cold",
+                "allergies": "Seasonal Allergies",
+                "heatstroke": "Heat-Related Illness"
+            };
+
+            sortedMatches.forEach(([disease, matchData]) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+
+                resultItem.innerHTML = `
+      <div class="result-name">${diseaseNames[disease]}</div>
+      <div class="result-percentage">Match: ${matchData.percentage}%</div>
+      <div class="result-description">
+        Your symptoms match ${matchData.count} of the common symptoms for ${diseaseNames[disease]}.
+      </div>
+      ${disease === 'covid19' || disease === 'flu' ?
+                        `<div class="result-action">Please consult a healthcare professional.</div>` :
+                        `<div class="result-action">Monitor your symptoms and rest.</div>`}
+    `;
+
+                resultsContainer.appendChild(resultItem);
+            });
+        };
+
+        // New Awareness Section Functionality
+        let currentAwarenessSlide = 1;
+        const totalAwarenessSlides = 4;
+
+        window.changeAwarenessSlide = function (direction) {
+            document.querySelector(`.awareness-slide[data-slide="${currentAwarenessSlide}"]`).classList.remove('active');
+            document.querySelector(`.pagination-indicators .indicator[data-slide="${currentAwarenessSlide}"]`).classList.remove('active');
+
+            if (direction === 'next') {
+                currentAwarenessSlide = currentAwarenessSlide < totalAwarenessSlides ? currentAwarenessSlide + 1 : 1;
+            } else {
+                currentAwarenessSlide = currentAwarenessSlide > 1 ? currentAwarenessSlide - 1 : totalAwarenessSlides;
+            }
+
+            document.querySelector(`.awareness-slide[data-slide="${currentAwarenessSlide}"]`).classList.add('active');
+            document.querySelector(`.pagination-indicators .indicator[data-slide="${currentAwarenessSlide}"]`).classList.add('active');
+        };
+
+        window.goToAwarenessSlide = function (slideNumber) {
+            document.querySelector(`.awareness-slide[data-slide="${currentAwarenessSlide}"]`).classList.remove('active');
+            document.querySelector(`.pagination-indicators .indicator[data-slide="${currentAwarenessSlide}"]`).classList.remove('active');
+
+            currentAwarenessSlide = slideNumber;
+
+            document.querySelector(`.awareness-slide[data-slide="${currentAwarenessSlide}"]`).classList.add('active');
+            document.querySelector(`.pagination-indicators .indicator[data-slide="${currentAwarenessSlide}"]`).classList.add('active');
+        };
+
+        // Mock data for alerts
+        const mockAlerts = {
+            "New York": [
+                {
+                    type: "pandemic",
+                    title: "COVID-19 Community Transmission",
+                    date: "2025-04-01",
+                    message: "Medium level of COVID-19 community transmission in your area. Mask use recommended for high-risk individuals."
+                },
+                {
+                    type: "weather",
+                    title: "Heat Advisory",
+                    date: "2025-04-05",
+                    message: "Heat advisory in effect from 12 PM to 8 PM. Temperatures expected to reach 95°F. Stay hydrated and limit outdoor activities."
+                }
+            ],
+            "Los Angeles": [
+                {
+                    type: "geological",
+                    title: "Earthquake Preparedness",
+                    date: "2025-04-03",
+                    message: "Recent seismic activity detected. Review your earthquake safety plan and check emergency supplies."
+                },
+                {
+                    type: "weather",
+                    title: "Wildfire Risk",
+                    date: "2025-04-04",
+                    message: "High wildfire risk due to dry conditions and strong winds. Avoid activities that could cause sparks."
+                },
+                {
+                    type: "pandemic",
+                    title: "Influenza Outbreak",
+                    date: "2025-03-30",
+                    message: "Seasonal influenza cases rising above expected levels. Vaccination recommended."
+                }
+            ],
+            "Miami": [
+                {
+                    type: "weather",
+                    title: "Hurricane Watch",
+                    date: "2025-04-02",
+                    message: "Hurricane watch in effect. Potential for tropical storm conditions within 48 hours. Review evacuation plans."
+                },
+                {
+                    type: "pandemic",
+                    title: "Dengue Fever Alert",
+                    date: "2025-03-29",
+                    message: "Increased cases of dengue fever reported. Use insect repellent and eliminate standing water around homes."
+                }
+            ],
+            "Chicago": [
+                {
+                    type: "weather",
+                    title: "Flood Warning",
+                    date: "2025-04-04",
+                    message: "Flood warning for areas near Chicago River. Move to higher ground if in flood-prone areas."
+                },
+                {
+                    type: "pandemic",
+                    title: "COVID-19 Update",
+                    date: "2025-04-01",
+                    message: "New COVID-19 variant detected in the community. Increased testing recommended for symptomatic individuals."
+                }
+            ],
+            "Phoenix": [
+                {
+                    type: "weather",
+                    title: "Excessive Heat Warning",
+                    date: "2025-04-05",
+                    message: "Dangerous heat conditions expected. Temperatures may reach 110°F. Check on vulnerable individuals and stay hydrated."
+                }
+            ]
+        };
+
+        // Function to get alerts based on location
+        window.getAlerts = function () {
+            const location = document.getElementById('location').value.trim();
+            const alertsList = document.getElementById('alertsList');
+
+            if (!location) {
+                alertsList.innerHTML = '<p class="alert-message">Please enter your location</p>';
+                return;
+            }
+
+            const cityMatches = Object.keys(mockAlerts).filter(city =>
+                city.toLowerCase().includes(location.toLowerCase())
+            );
+
+            if (cityMatches.length === 0) {
+                alertsList.innerHTML = '<p class="alert-message">No alerts found for this location. Try a different city.</p>';
+                return;
+            }
+
+            const cityAlerts = mockAlerts[cityMatches[0]];
+            if (!cityAlerts || cityAlerts.length === 0) {
+                alertsList.innerHTML = '<p class="alert-message">No current alerts for this location</p>';
+                return;
+            }
+
+            alertsList.innerHTML = '';
+            cityAlerts.forEach(alert => {
+                const alertItem = document.createElement('div');
+                alertItem.className = `alert-item ${alert.type}`;
+
+                const alertDate = new Date(alert.date);
+                const formattedDate = alertDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                alertItem.innerHTML = `
+      <div class="alert-title">
+        <span>${alert.title}</span>
+        <span class="alert-date">${formattedDate}</span>
+      </div>
+      <p>${alert.message}</p>
+    `;
+
+                alertsList.appendChild(alertItem);
+            });
+        };
+
+        // Function to filter alerts by type
+        window.filterAlerts = function () {
+            const filterValue = document.getElementById('alertFilter').value;
+            const alertItems = document.querySelectorAll('.alert-item');
+
+            if (!alertItems.length) return;
+
+            alertItems.forEach(item => {
+                if (filterValue === 'all' || item.classList.contains(filterValue)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYear = new Date().getFullYear();
+            document.querySelector('.footer-bottom p').innerHTML = `&copy; ${currentYear} SafeGuard. All rights reserved. For educational purposes only.`;
+
+            resetSymptomChecker();
+        });
+
+    </script>
+</body>
+
+</html>
