@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Profile - Pandemic Response</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/firstPage.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <style>
+      /* Profile-Specific Styles */
+      .profile-container {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 40px;
+        width: 90%;
+        max-width: 1200px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid #d1d5db;
+        display: flex;
+        margin-left: 250px;
+        flex-wrap: wrap;
+        gap: 40px;
+        overflow: hidden;
+        margin-top: 80px;
+      }
+
+      .profile-left {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        min-width: 300px;
+      }
+
+      .profile-pic {
+        width: 100%;
+        max-width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #2563eb;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .profile-pic:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+      }
+
+      .image-options {
+        display: none;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        z-index: 1001;
+      }
+
+      .image-options button {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        padding: 10px;
+        margin: 5px 0;
+        width: 100%;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .image-options button:hover {
+        background: #1e40af;
+      }
+
+      .profile-right {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+      }
+
+      .profile-right h2 {
+        font-size: 2.5rem;
+        color: #1e40af;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .info-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+      }
+
+      .info-row label {
+        font-size: 1.2rem;
+        color: #333;
+        width: 120px;
+        font-weight: 500;
+      }
+
+      .info-row .input-group {
+        flex: 1;
+      }
+
+      .info-row .edit-icon {
+        color: #2563eb;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .info-row .edit-icon:hover {
+        color: #1e40af;
+      }
+
+      .badges-section {
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .badges-section h3 {
+        font-size: 1.8rem;
+        color: #1e40af;
+        margin-bottom: 20px;
+      }
+
+      .badges {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .badge-container {
+        width: 100%;
+        max-width: 500px;
+        background: #f1f3f5;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: transform 0.3s ease, background 0.3s ease;
+      }
+
+      .badge:hover {
+        background: rgba(37, 99, 235, 0.5);
+        transform: scale(1.1);
+      }
+
+      .badge-info {
+        flex: 1;
+        text-align: left;
+      }
+
+      .badge-info span {
+        display: block;
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+
+      .progress {
+        height: 100%;
+        background: #2563eb;
+        border-radius: 5px;
+        transition: width 0.3s ease;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+        width: 100%;
+      }
+
+      .save-btn,
+      .cancel-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+
+      .save-btn {
+        background: #2563eb;
+        color: #ffffff;
+      }
+
+      .save-btn:hover {
+        background: #1e40af;
+        transform: scale(1.05);
+      }
+
+      .cancel-btn {
+        background: #e9ecef;
+        color: #333;
+      }
+
+      .cancel-btn:hover {
+        background: #d1d5db;
+        transform: scale(1.05);
+      }
+
+      @media (max-width: 768px) {
+        .profile-container {
+          flex-direction: column;
+          padding: 20px;
+        }
+
+        .profile-left,
+        .profile-right {
+          max-width: 100%;
+          padding: 0;
+        }
+
+        .profile-right {
+          border-left: none;
+          border-top: 1px solid #d1d5db;
+          padding-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar (Consistent Across All Pages) -->
+    <div class="logo" onclick="window.location.href='/'">
+      <img src="/images/logo.png" alt="Pandemic Response Logo" class="logo-img" />
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-links">
+        <a href="/" class="sidebar-link"
+          ><i class="fa-solid fa-home"></i> Home</a
+        >
+        <a href="/firstPage" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Dashboard</a
+        >
+        <a href="/pandamic" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Live Pandemic Stats</a
+        >
+        <a href="/request" class="sidebar-link"
+          ><i class="fa-solid fa-box-open"></i> Need Resources</a
+        >
+        <a href="/map" class="sidebar-link"
+          ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+        >
+        <a href="/stats" class="sidebar-link"
+          ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+        >
+        <a href="/organizations" class="sidebar-link"
+          ><i class="fa-solid fa-building"></i> Organizations</a
+        >
+        <a href="/org-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+        >
+        <a href="/user-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-user"></i> User Dashboard</a
+        >
+        <a href="/alerts" class="sidebar-link"
+        ><i class="fa-solid fa-alert"></i> Alerts</a
+      >
+        <a href="/profile" class="sidebar-link"
+          ><i class="fa-solid fa-id-card"></i> Profile</a
+        >
+      </div>
+      <div class="user-profile">
+        <img
+          src="/images/logohaire.png"
+          alt="User Photo"
+          id="user-photo"
+          class="user-photo"
+          onclick="toggleSidebarMobile()"
+        />
+        <div class="user-info">
+          <span id="user-name">User Name</span>
+          <!-- <span id="user-email">user@example.com</span> -->
+        </div>
+        <button class="profile-btn" onclick="window.location.href='/profile'">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+      <i class="fa-solid fa-bars mobile-hamburger"></i>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="profile-container">
+        <!-- Left Side: Profile Image -->
+        <div class="profile-left">
+          <img
+            src="/images/logohaire.png"
+            alt="Profile Picture"
+            id="profilePic"
+            class="profile-pic"
+            onclick="showImageOptions()"
+          />
+          <div class="image-options" id="imageOptions">
+            <button onclick="viewImage()">View Image</button>
+            <button onclick="updateImage()">Update Image</button>
+          </div>
+        </div>
+
+        <!-- Right Side: Profile Information -->
+        <div class="profile-right">
+          <h2><i class="fa-solid fa-user"></i> Update Profile</h2>
+          <div class="info-row">
+            <label for="fullName">Full Name:</label>
+            <div class="input-group">
+              <i class="fa-solid fa-user"></i>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="Full Name"
+                disabled
+              />
+            </div>
+            <span class="edit-icon" onclick="enableEdit('fullName')"
+              ><i class="fa-solid fa-pencil-alt"></i
+            ></span>
+          </div>
+          <div class="info-row">
+            <label for="userName">Username:</label>
+            <div class="input-group">
+              <i class="fa-solid fa-at"></i>
+              <input
+                type="text"
+                id="userName"
+                placeholder="Username"
+                disabled
+              />
+            </div>
+            <span class="edit-icon" onclick="enableEdit('userName')"
+              ><i class="fa-solid fa-pencil-alt"></i
+            ></span>
+          </div>
+          <div class="info-row">
+            <label for="email">Email:</label>
+            <div class="input-group">
+              <i class="fa-solid fa-envelope"></i>
+              <input type="email" id="email" placeholder="Email" disabled />
+            </div>
+            <span class="edit-icon" onclick="enableEdit('email')"
+              ><i class="fa-solid fa-pencil-alt"></i
+            ></span>
+          </div>
+          <div class="info-row">
+            <label for="phone">Phone:</label>
+            <div class="input-group">
+              <i class="fa-solid fa-phone"></i>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="Phone Number"
+                disabled
+              />
+            </div>
+            <span class="edit-icon" onclick="enableEdit('phone')"
+              ><i class="fa-solid fa-pencil-alt"></i
+            ></span>
+          </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="badges-section">
+          <h3><i class="fa-solid fa-trophy"></i> Achievements</h3>
+          <div class="badges" id="badges">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="save-btn" onclick="saveChanges()">Save Changes</button>
+          <button class="cancel-btn" onclick="cancelChanges()">Cancel</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Badge Popup -->
+    <div class="grey"></div>
+    <div class="popup" id="badgePopup">
+      <div class="popup-content">
+        <h3 id="badgeTitle">Badge Title</h3>
+        <p id="badgeDescription">Badge description goes here.</p>
+        <button class="close-popup" onclick="closePopup()">Close</button>
+      </div>
+    </div>
+
+    <script src="/js/firstPage.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script>
+      // Global variable to store the selected file for the profile image
+      let selectedFile = null;
+
+      // Enable editing for a given input field
+      function enableEdit(fieldId) {
+        const input = document.getElementById(fieldId);
+        if (input) {
+          input.removeAttribute("disabled");
+          input.focus();
+        }
+      }
+
+      // Fetch the user profile from the backend and populate fields
+      async function fetchProfile() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showPopupMessage("Please log in to view your profile.");
+          window.location.href = "/login";
+          return;
+        }
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/user/profile",
+            {
+              method: "GET",
+              headers: { Authorization: token },
+            }
+          );
+          if (!response.ok) throw new Error("Failed to fetch profile");
+          const data = await response.json();
+          document.getElementById("fullName").value = data.name || "";
+          document.getElementById("userName").value = data.username || "";
+          document.getElementById("email").value = data.email || "";
+          document.getElementById("phone").value = data.phone || "";
+          if (data.photo) {
+            document.getElementById("profilePic").src =
+              "http://localhost:5000/" + data.photo;
+          }
+          // Update sidebar
+          updateSidebarProfile(data);
+          // Populate badges
+          updateBadges(data);
+        } catch (err) {
+          console.error("Error fetching profile:", err);
+          showPopupMessage("Error loading profile.");
+        }
+      }
+
+      // Save changes by sending updated profile data to the backend
+      async function saveChanges() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showPopupMessage("Please log in to update your profile.");
+          window.location.href = "/login";
+          return;
+        }
+        const formData = new FormData();
+        formData.append("fullName", document.getElementById("fullName").value);
+        formData.append("userName", document.getElementById("userName").value);
+        formData.append("email", document.getElementById("email").value);
+        formData.append("phone", document.getElementById("phone").value);
+        if (selectedFile) {
+          formData.append("photo", selectedFile);
+        }
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/user/update",
+            {
+              method: "POST",
+              headers: { Authorization: token },
+              body: formData,
+            }
+          );
+          const result = await response.json();
+          if (response.ok) {
+            showPopupMessage("Profile updated successfully!");
+            fetchProfile(); // Refresh profile data
+          } else {
+            showPopupMessage(result.error || "Error updating profile.");
+          }
+        } catch (err) {
+          console.error("Error updating profile:", err);
+          showPopupMessage("Error updating profile.");
+        }
+      }
+
+      // Cancel changes by re-fetching the profile data
+      function cancelChanges() {
+        fetchProfile();
+      }
+
+      // Badge popup functions
+      function showBadgePopup(title, description) {
+        document.getElementById("badgeTitle").textContent = title;
+        document.getElementById("badgeDescription").textContent = description;
+        document.getElementById("badgePopup").style.display = "flex";
+      }
+
+      function closePopup() {
+        document.getElementById("badgePopup").style.display = "none";
+      }
+
+      // Image options functions
+      function showImageOptions() {
+        const options = document.getElementById("imageOptions");
+        options.style.display =
+          options.style.display === "block" ? "none" : "block";
+      }
+
+      function viewImage() {
+        const image = document.getElementById("profilePic");
+        window.open(image.src, "_blank");
+        document.getElementById("imageOptions").style.display = "none";
+      }
+
+      function updateImage() {
+        const imageInput = document.createElement("input");
+        imageInput.type = "file";
+        imageInput.accept = "image/*";
+        imageInput.onchange = function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById("profilePic").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        imageInput.click();
+        document.getElementById("imageOptions").style.display = "none";
+      }
+
+      // Update sidebar profile (assumes sidebar.js has this)
+      function updateSidebarProfile(data) {
+        const userPhoto = document.getElementById("user-photo");
+        const userName = document.getElementById("user-name");
+        const userEmail = document.getElementById("user-email");
+        if (userPhoto && data.photo)
+          userPhoto.src = "http://localhost:5000/" + data.photo;
+        if (userName) userName.textContent = data.name || "User Name";
+        if (userEmail) userEmail.textContent = data.email || "user@example.com";
+      }
+
+      // Update badges with seekbar
+      function updateBadges(data) {
+        const badgesDiv = document.getElementById("badges");
+        if (!badgesDiv) return;
+
+        badgesDiv.innerHTML = "";
+        const isOrgHead = data.isOrgHead || false; // From backend
+        const tasksCompleted = data.tasksCompleted || 0;
+        const taskMilestones = [5, 10, 20]; // Example milestones
+
+        // Volunteer Badge with Seekbar
+        const volunteerBadge = document.createElement("div");
+        volunteerBadge.className = "badge-container";
+        let nextMilestone =
+          taskMilestones.find((m) => m > tasksCompleted) ||
+          taskMilestones[taskMilestones.length - 1];
+        let progress = (tasksCompleted / nextMilestone) * 100;
+        volunteerBadge.innerHTML = `
+                <div class="badge" onclick="showBadgePopup('Volunteer', 'Earned by completing tasks')">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                </div>
+                <div class="badge-info">
+                    <span>Volunteer - ${tasksCompleted}/${nextMilestone} Tasks</span>
+                    <span>${nextMilestone - tasksCompleted} more to go</span>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+            `;
+        badgesDiv.appendChild(volunteerBadge);
+
+        // Organization-Head Badge
+        if (isOrgHead) {
+          const orgHeadBadge = document.createElement("div");
+          orgHeadBadge.className = "badge-container";
+          orgHeadBadge.innerHTML = `
+                    <div class="badge" onclick="showBadgePopup('Organization Head', 'Awarded for creating an organization')">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div class="badge-info">
+                        <span>Organization Head</span>
+                        <span>Creator of an organization</span>
+                    </div>
+                `;
+          badgesDiv.appendChild(orgHeadBadge);
+        }
+      }
+
+      // On page load, fetch the user profile data
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchProfile();
+      });
+    </script>
+  </body>
+</html>

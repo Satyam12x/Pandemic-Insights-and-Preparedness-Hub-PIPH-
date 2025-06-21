@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pandemic Impact Dashboard - Pandemic Response</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/firstPage.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      /* Stats-Specific Styles */
+      .main-dashboard {
+        margin-top: 80px;
+        padding: 30px 40px;
+        background-color: #f8fafc;
+      }
+
+      .stats-section h2,
+      .graph-section h2 {
+        font-size: 2.5rem;
+        color: #1e40af;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .stats-card {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .stats-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
+      }
+
+      .stats-card h3 {
+        font-size: 1.2rem;
+        color: #1e40af;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats-card p {
+        font-size: 1.8rem;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .graph-section {
+        margin-bottom: 40px;
+      }
+
+      .graph-card {
+        background: linear-gradient(
+          135deg,
+          rgba(37, 99, 235, 0.05),
+          rgba(255, 255, 255, 0.9)
+        );
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        min-height: 400px;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 400px !important;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      #country-select,
+      #time-filter {
+        padding: 10px;
+        border-radius: 8px;
+        background: #f1f3f5;
+        color: #1e40af;
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        width: 200px;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%231e40af" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        appearance: none;
+      }
+
+      #country-select option,
+      #time-filter option {
+        background: #ffffff;
+        color: #333;
+      }
+
+      .control-btn {
+        background: #2563eb;
+        color: #ffffff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+
+      .control-btn:hover {
+        background: #1e40af;
+        transform: scale(1.05);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-dashboard {
+          padding: 20px;
+        }
+
+        .stats-container {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        #country-select,
+        #time-filter {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="logo" onclick="window.location.href='/'">
+      <img src="/images/logo.png" alt="Pandemic Response Logo" class="logo-img" />
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-links">
+        <a href="/" class="sidebar-link"
+          ><i class="fa-solid fa-home"></i> Home</a
+        >
+        <a href="/firstPage" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Dashboard</a
+        >
+        <a href="/pandamic" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Live Pandemic Stats</a
+        >
+        <a href="/request" class="sidebar-link"
+          ><i class="fa-solid fa-box-open"></i> Need Resources</a
+        >
+        <a href="/map" class="sidebar-link"
+          ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+        >
+        <a href="/stats" class="sidebar-link"
+          ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+        >
+        <a href="/organizations" class="sidebar-link"
+          ><i class="fa-solid fa-building"></i> Organizations</a
+        >
+        <a href="/org-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+        >
+        <a href="/user-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-user"></i> User Dashboard</a
+        >
+        <a href="/alerts" class="sidebar-link"
+        ><i class="fa-solid fa-alert"></i> Alerts</a
+      >
+        <a href="/profile" class="sidebar-link"
+          ><i class="fa-solid fa-id-card"></i> Profile</a
+        >
+      </div>
+      <div class="user-profile">
+        <img
+          src="/default-user.png"
+          alt="User Photo"
+          id="user-photo"
+          class="user-photo"
+          onclick="toggleSidebarMobile()"
+        />
+        <div class="user-info">
+          <span id="user-name">User Name</span>
+          <!-- <span id="user-email">user@example.com</span> -->
+        </div>
+        <button class="profile-btn" onclick="window.location.href='/profile'">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+      <i class="fa-solid fa-bars mobile-hamburger"></i>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content main-dashboard">
+      <div class="controls">
+        <select id="country-select">
+          <option value="" disabled selected>Select a country</option>
+        </select>
+        <select id="time-filter">
+          <option value="7">Last 7 Days</option>
+          <option value="30" selected>Last 30 Days</option>
+          <option value="all">All Time</option>
+        </select>
+        <button class="control-btn" onclick="exportReport()">
+          <i class="fa-solid fa-download"></i> Download Report
+        </button>
+      </div>
+
+      <section class="stats-section">
+        <h2><i class="fa-solid fa-virus"></i> Live Statistics</h2>
+        <div class="stats-container">
+          <div class="stats-card" id="live-cases">
+            <h3>Live Cases</h3>
+            <p id="live-cases-count">Loading...</p>
+          </div>
+          <div class="stats-card" id="vaccinated">
+            <h3>Vaccinated</h3>
+            <p id="vaccinated-count">Loading...</p>
+          </div>
+          <div class="stats-card" id="recovered">
+            <h3>Recovered</h3>
+            <p id="recovered-count">Loading...</p>
+          </div>
+          <div class="stats-card" id="deaths">
+            <h3>Deaths</h3>
+            <p id="deaths-count">Loading...</p>
+          </div>
+        </div>
+        <div class="graph-card">
+          <canvas id="stats-doughnut"></canvas>
+        </div>
+      </section>
+
+      <section class="graph-section">
+        <h2><i class="fa-solid fa-heartbeat"></i> Healthcare Capacity</h2>
+        <div class="graph-card">
+          <canvas id="healthcare-chart"></canvas>
+        </div>
+      </section>
+
+      <section class="graph-section">
+        <h2><i class="fa-solid fa-chart-line"></i> Economic Impact</h2>
+        <div class="graph-card">
+          <canvas id="economy-chart"></canvas>
+        </div>
+      </section>
+
+      <section class="graph-section">
+        <h2><i class="fa-solid fa-chart-area"></i> Predictive Analysis</h2>
+        <div class="graph-card">
+          <canvas id="predictive-chart"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <!-- Popup -->
+    <div class="grey"></div>
+    <div class="popup" id="popup">
+      <span class="popup-text" id="popup-text"></span>
+      <button class="close-popup" id="close-popup">Close</button>
+    </div>
+
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/firstPage.js"></script>
+    <script>
+      let healthcareChart, economyChart, predictiveChart, statsDoughnut;
+      let pandemicData = {};
+
+      const apiKey = "ff96b9f361a74304950aeff92e607e7e"; // Replace with your News API key
+
+      // Mock economic data
+      const economicData = {
+        USA: {
+          labels: [
+            "Jan 2020",
+            "Apr 2020",
+            "Jul 2020",
+            "Oct 2020",
+            "Jan 2021",
+            "Apr 2021",
+            "Jul 2021",
+            "Oct 2021",
+            "Jan 2022",
+            "Apr 2022",
+            "Jul 2022",
+            "Oct 2022",
+            "Dec 2022",
+          ],
+          stockPrices: [
+            3200, 2800, 3000, 3100, 3400, 3600, 3800, 4000, 4100, 3900, 3700,
+            3800, 3950,
+          ],
+          gdpPerCapita: [
+            63000, 59000, 57000, 58000, 60000, 62000, 64000, 66000, 67000,
+            65000, 63000, 64000, 66000,
+          ],
+          unemploymentRate: [
+            3.5, 14.8, 10.2, 6.9, 6.3, 5.9, 5.4, 4.6, 3.9, 3.7, 3.6, 3.5, 3.4,
+          ],
+        },
+        India: {
+          labels: [
+            "Jan 2020",
+            "Apr 2020",
+            "Jul 2020",
+            "Oct 2020",
+            "Jan 2021",
+            "Apr 2021",
+            "Jul 2021",
+            "Oct 2021",
+            "Jan 2022",
+            "Apr 2022",
+            "Jul 2022",
+            "Oct 2022",
+            "Dec 2022",
+          ],
+          stockPrices: [
+            41000, 35000, 37000, 39000, 46000, 48000, 52000, 59000, 57000,
+            55000, 58000, 61000, 62000,
+          ],
+          gdpPerCapita: [
+            2100, 1900, 1800, 1850, 1950, 2000, 2050, 2100, 2150, 2100, 2150,
+            2200, 2250,
+          ],
+          unemploymentRate: [
+            7.1, 23.5, 11.0, 7.0, 6.5, 8.0, 6.8, 6.3, 6.1, 6.0, 5.8, 5.7, 5.6,
+          ],
+        },
+      };
+
+      function generateEconomicData() {
+        const labels = [
+          "Jan 2020",
+          "Apr 2020",
+          "Jul 2020",
+          "Oct 2020",
+          "Jan 2021",
+          "Apr 2021",
+          "Jul 2021",
+          "Oct 2021",
+          "Jan 2022",
+          "Apr 2022",
+          "Jul 2022",
+          "Oct 2022",
+          "Dec 2022",
+        ];
+        const stockPrices = labels.map(
+          () => Math.floor(Math.random() * 2000) + 2000
+        );
+        const gdpPerCapita = labels.map(
+          () => Math.floor(Math.random() * 5000) + 1000
+        );
+        const unemploymentRate = labels.map(() =>
+          (Math.random() * 10 + 3).toFixed(1)
+        );
+        return { labels, stockPrices, gdpPerCapita, unemploymentRate };
+      }
+
+      // Fetch live COVID-19 data
+      async function fetchPandemicData(country = "global") {
+        try {
+          const url =
+            country === "global"
+              ? "https://disease.sh/v3/covid-19/all"
+              : `https://disease.sh/v3/covid-19/countries/${country}`;
+          const response = await fetch(url);
+          if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          const data = await response.json();
+          pandemicData = data;
+          updateStats(data);
+          updateDoughnutChart(data);
+        } catch (error) {
+          console.error("Error fetching pandemic data:", error);
+          showPopupMessage("Failed to load pandemic data.");
+          updateStats({
+            active: "N/A",
+            tests: "N/A",
+            recovered: "N/A",
+            deaths: "N/A",
+          });
+          updateDoughnutChart({ active: 0, tests: 0, recovered: 0, deaths: 0 });
+        }
+      }
+
+      function updateStats(data) {
+        document.getElementById("live-cases-count").textContent =
+          data.active !== undefined ? data.active.toLocaleString() : "N/A";
+        document.getElementById("vaccinated-count").textContent =
+          data.tests !== undefined ? data.tests.toLocaleString() : "N/A";
+        document.getElementById("recovered-count").textContent =
+          data.recovered !== undefined
+            ? data.recovered.toLocaleString()
+            : "N/A";
+        document.getElementById("deaths-count").textContent =
+          data.deaths !== undefined ? data.deaths.toLocaleString() : "N/A";
+      }
+
+      // Fetch historical data for predictive chart
+      async function fetchHistoricalData(country = "global") {
+        try {
+          const days =
+            document.getElementById("time-filter").value === "all"
+              ? 900
+              : document.getElementById("time-filter").value;
+          const url =
+            country === "global"
+              ? `https://disease.sh/v3/covid-19/historical/all?lastdays=${days}`
+              : `https://disease.sh/v3/covid-19/historical/${country}?lastdays=${days}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.error(`Historical data not available for ${country}.`);
+            updatePredictiveChart(["No Data Available"], [0]);
+            showPopupMessage(`Historical data not available for ${country}.`);
+            return;
+          }
+          const data = await response.json();
+          const timeline = country === "global" ? data : data.timeline;
+          const dates = Object.keys(timeline.cases);
+          const predLabels =
+            days === "7"
+              ? dates.slice(-7)
+              : days === "30"
+              ? dates.slice(-30)
+              : dates;
+          const predData = Object.values(timeline.cases).slice(
+            dates.length - predLabels.length
+          );
+          updatePredictiveChart(predLabels, predData);
+        } catch (error) {
+          console.error("Error fetching historical data:", error);
+          showPopupMessage("Failed to load historical data.");
+          updatePredictiveChart(["Error"], [0]);
+        }
+      }
+
+      // Fetch country from coordinates
+      async function fetchCountryFromCoordinates(lat, lon) {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+          );
+          const data = await response.json();
+          if (data.address && data.address.country) {
+            const country = data.address.country;
+            fetchPandemicData(country);
+            fetchHistoricalData(country);
+            updateGraphs(country);
+            selectCountryInDropdown(country);
+          } else {
+            throw new Error("Country data not found");
+          }
+        } catch (error) {
+          console.error("Error fetching country:", error);
+          fetchPandemicData("India");
+          fetchHistoricalData("India");
+          updateGraphs("India");
+        }
+      }
+
+      function selectCountryInDropdown(country) {
+        const select = document.getElementById("country-select");
+        for (let option of select.options) {
+          if (
+            option.value.toLowerCase() === country.toLowerCase() ||
+            option.text.toLowerCase() === country.toLowerCase()
+          ) {
+            select.value = option.value;
+            break;
+          }
+        }
+      }
+
+      // Populate country dropdown
+      async function populateCountryDropdown() {
+        try {
+          const response = await fetch(
+            "https://disease.sh/v3/covid-19/countries"
+          );
+          if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          const countries = await response.json();
+          const select = document.getElementById("country-select");
+          select.innerHTML =
+            '<option value="" disabled selected>Select a country</option>';
+          countries.forEach((country) => {
+            const option = document.createElement("option");
+            option.value = country.country;
+            option.textContent = country.country;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error populating country dropdown:", error);
+          showPopupMessage("Failed to load country list.");
+        }
+      }
+
+      // Update graphs
+      function updateGraphs(country) {
+        const healthcareLabels = [
+          "Jan 2020",
+          "Apr 2020",
+          "Jul 2020",
+          "Oct 2020",
+          "Jan 2021",
+          "Apr 2021",
+          "Jul 2021",
+          "Oct 2021",
+          "Jan 2022",
+          "Apr 2022",
+          "Jul 2022",
+          "Oct 2022",
+          "Dec 2022",
+        ];
+        const healthcareCapacity = healthcareLabels.map(
+          () => Math.floor(Math.random() * 30) + 60
+        );
+        healthcareChart.data.labels = healthcareLabels;
+        healthcareChart.data.datasets[0].data = healthcareCapacity;
+        healthcareChart.update();
+
+        let econData = economicData[country] || generateEconomicData();
+        economyChart.data.labels = econData.labels;
+        economyChart.data.datasets[0].data = econData.stockPrices;
+        economyChart.data.datasets[1].data = econData.gdpPerCapita.map(
+          (g) => g / 1000
+        );
+        economyChart.data.datasets[2].data = econData.unemploymentRate;
+        economyChart.update();
+      }
+
+      function updateDoughnutChart(data) {
+        statsDoughnut.data.datasets[0].data = [
+          data.active || 0,
+          data.tests || 0,
+          data.recovered || 0,
+          data.deaths || 0,
+        ];
+        statsDoughnut.update();
+      }
+
+      // Chart Setup
+      document.addEventListener("DOMContentLoaded", () => {
+        const ctx1 = document
+          .getElementById("healthcare-chart")
+          .getContext("2d");
+        healthcareChart = new Chart(ctx1, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Healthcare Capacity (%)",
+                data: [],
+                borderColor: "#00ffff",
+                backgroundColor: "rgba(75, 94, 109, 0.2)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: "#333" } }, // Dark grey for x-axis labels
+              y: { ticks: { color: "#333" }, beginAtZero: true }, // Dark grey for y-axis labels
+            },
+            plugins: {
+              legend: { labels: { color: "#333" } }, // Dark grey for legend
+              title: {
+                display: true,
+                text: "Healthcare Capacity Over Time",
+                color: "#1e40af", // Dark blue for title
+                font: { size: 18 },
+              },
+              zoom: {
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+
+        const ctx2 = document.getElementById("economy-chart").getContext("2d");
+        economyChart = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Stock Prices (Index)",
+                data: [],
+                borderColor: "#00ffff",
+                fill: false,
+                tension: 0.3,
+                yAxisID: "y1",
+              },
+              {
+                label: "GDP per Capita (k USD)",
+                data: [],
+                borderColor: "#00b7eb",
+                fill: false,
+                tension: 0.3,
+                yAxisID: "y2",
+              },
+              {
+                label: "Unemployment Rate (%)",
+                data: [],
+                borderColor: "#ff5555",
+                fill: false,
+                tension: 0.3,
+                yAxisID: "y3",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: "#333" } }, // Dark grey for x-axis labels
+              y1: {
+                position: "left",
+                ticks: { color: "#333" }, // Dark grey for y1-axis labels
+                beginAtZero: false,
+              },
+              y2: {
+                position: "right",
+                ticks: { color: "#333" }, // Dark grey for y2-axis labels
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+              },
+              y3: {
+                position: "right",
+                ticks: { color: "#333" }, // Dark grey for y3-axis labels
+                beginAtZero: true,
+                grid: { drawOnChartArea: false },
+              },
+            },
+            plugins: {
+              legend: { labels: { color: "#333" } }, // Dark grey for legend
+              title: {
+                display: true,
+                text: "Economic Impact Over Time",
+                color: "#1e40af", // Dark blue for title
+                font: { size: 18 },
+              },
+              zoom: {
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+
+        const ctx3 = document
+          .getElementById("predictive-chart")
+          .getContext("2d");
+        predictiveChart = new Chart(ctx3, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Predicted Cases",
+                data: [],
+                borderColor: "#ff5555",
+                backgroundColor: "rgba(75, 94, 109, 0.2)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: "#333" } }, // Dark grey for x-axis labels
+              y: { ticks: { color: "#333" }, beginAtZero: true }, // Dark grey for y-axis labels
+            },
+            plugins: {
+              legend: { labels: { color: "#333" } }, // Dark grey for legend
+              title: {
+                display: true,
+                text: "Predictive Case Trends",
+                color: "#1e40af", // Dark blue for title
+                font: { size: 18 },
+              },
+              zoom: {
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  mode: "x",
+                },
+              },
+            },
+          },
+        });
+
+        const ctx4 = document.getElementById("stats-doughnut").getContext("2d");
+        statsDoughnut = new Chart(ctx4, {
+          type: "doughnut",
+          data: {
+            labels: ["Live Cases", "Vaccinated", "Recovered", "Deaths"],
+            datasets: [
+              {
+                data: [0, 0, 0, 0],
+                backgroundColor: ["#ff9999", "#2ecc71", "#00ffff", "#e74c3c"],
+                borderColor: "#000",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#333" } }, // Dark grey for legend
+              title: {
+                display: true,
+                text: "Stats Distribution",
+                color: "#1e40af", // Dark blue for title
+                font: { size: 18 },
+              },
+            },
+          },
+        });
+
+        // Initial load
+        populateCountryDropdown().then(() => {
+          getUserLocation();
+          fetchPandemicData("India");
+          fetchHistoricalData("India");
+          updateGraphs("India");
+        });
+
+        // Polling for real-time updates (every 30 seconds)
+        setInterval(() => {
+          const country =
+            document.getElementById("country-select").value || "India";
+          fetchPandemicData(country);
+        }, 30000);
+      });
+
+      document
+        .getElementById("country-select")
+        .addEventListener("change", (event) => {
+          const selectedCountry = event.target.value;
+          fetchPandemicData(selectedCountry);
+          fetchHistoricalData(selectedCountry);
+          updateGraphs(selectedCountry);
+        });
+
+      document
+        .getElementById("time-filter")
+        .addEventListener("change", (event) => {
+          const selectedCountry =
+            document.getElementById("country-select").value || "India";
+          fetchHistoricalData(selectedCountry);
+        });
+
+      function getUserLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              fetchCountryFromCoordinates(latitude, longitude);
+            },
+            () => {
+              fetchPandemicData("India");
+              fetchHistoricalData("India");
+              updateGraphs("India");
+            }
+          );
+        } else {
+          fetchPandemicData("India");
+          fetchHistoricalData("India");
+          updateGraphs("India");
+        }
+      }
+
+      function updatePredictiveChart(labels, data) {
+        predictiveChart.data.labels = labels;
+        predictiveChart.data.datasets[0].data = data;
+        predictiveChart.update();
+      }
+
+      // Export Report as PDF
+      async function exportReport() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setTextColor(0, 255, 255); // Cyan text
+        doc.text("Pandemic Impact Report", 10, 10);
+
+        // Stats Table
+        const statsData = [
+          [
+            "Live Cases",
+            document.getElementById("live-cases-count").textContent,
+          ],
+          [
+            "Vaccinated",
+            document.getElementById("vaccinated-count").textContent,
+          ],
+          ["Recovered", document.getElementById("recovered-count").textContent],
+          ["Deaths", document.getElementById("deaths-count").textContent],
+        ];
+        doc.autoTable({
+          startY: 20,
+          head: [["Metric", "Value"]],
+          body: statsData,
+          theme: "grid",
+          styles: { textColor: [255, 255, 255], fillColor: [0, 0, 0] }, // White text, black background
+          headStyles: { fillColor: [0, 255, 255], textColor: [0, 0, 0] }, // Cyan header, black text
+        });
+
+        // Graphs
+        const charts = [
+          "stats-doughnut",
+          "healthcare-chart",
+          "economy-chart",
+          "predictive-chart",
+        ];
+        let yPos = doc.lastAutoTable.finalY + 10;
+        for (const chartId of charts) {
+          const canvas = document.getElementById(chartId);
+          const imgData = canvas.toDataURL("image/png");
+          doc.setTextColor(0, 255, 255);
+          doc.text(
+            `${chartId
+              .replace("-chart", "")
+              .replace("stats-doughnut", "Stats Distribution")} Graph`,
+            10,
+            yPos
+          );
+          doc.addImage(imgData, "PNG", 10, yPos + 10, 180, 90);
+          yPos += 110;
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 10;
+          }
+        }
+
+        doc.save("pandemic_report.pdf");
+      }
+    </script>
+  </body>
+</html>

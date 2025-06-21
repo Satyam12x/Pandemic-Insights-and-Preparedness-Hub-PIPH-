@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pandemic Response - Organizations</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/firstPage.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: #f4f7fa;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-content {
+        padding: 20px;
+        margin-left: 250px;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #2563eb;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-link {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2rem;
+        padding: 10px;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: #dbeafe;
+      }
+
+      .volunteer-btn {
+        background: #22c55e;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+
+      .volunteer-btn:hover {
+        background: #16a34a;
+        transform: scale(1.05);
+      }
+
+      .featured-orgs {
+        margin: 30px 0;
+      }
+
+      .featured-orgs h2 {
+        font-size: 2rem;
+        color: #1e40af;
+        text-align: center;
+        margin-top: 100px;
+      }
+
+      .featured-grid {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 10px;
+      }
+
+      .featured-card {
+        flex: 0 0 300px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .org-listing {
+        margin-top: 30px;
+      }
+
+      .org-listing h2 {
+        font-size: 2rem;
+        color: #1e40af;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .filters input,
+      .filters select {
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        width: 200px;
+        background: #fff;
+        color: #333;
+        transition: border-color 0.3s ease;
+      }
+
+      .filters input:focus,
+      .filters select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+      }
+
+      .filters select option {
+        background: #000;
+        color: #fff;
+      }
+
+      .org-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+        padding: 0 10px;
+      }
+
+      .org-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .org-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      .org-card h3 {
+        font-size: 1.5rem;
+        color: #1e40af;
+        margin: 0 0 10px;
+      }
+
+      .org-card p {
+        font-size: 1rem;
+        color: #666;
+        margin: 5px 0;
+      }
+
+      .org-card .rating {
+        color: #f59e0b;
+      }
+
+      .org-card .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .org-card .join-btn,
+      .org-card .contact-btn {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+      }
+
+      .org-card .contact-btn {
+        background: #6b7280;
+      }
+
+      .org-card .join-btn:hover {
+        background: #1e40af;
+      }
+
+      .org-card .contact-btn:hover {
+        background: #4b5563;
+      }
+
+      #load-more {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      #load-more:hover {
+        background: #1e40af;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background: #2563eb;
+        color: #fff;
+        margin-top: 40px;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .footer-links a {
+        color: #dbeafe;
+        margin: 0 15px;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: #fff;
+      }
+
+      .tutorial-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tutorial-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        max-width: 500px;
+        text-align: center;
+      }
+
+      .tutorial-box h3 {
+        font-size: 1.8rem;
+        color: #1e40af;
+        margin-bottom: 15px;
+      }
+
+      .tutorial-box p {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .tutorial-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .tutorial-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .gotcha-btn {
+        background: #2563eb;
+        color: #fff;
+      }
+
+      .gotcha-btn:hover {
+        background: #1e40af;
+      }
+
+      .skip-btn {
+        background: #d1d5db;
+        color: #333;
+      }
+
+      .skip-btn:hover {
+        background: #9ca3af;
+      }
+
+      .highlight {
+        box-shadow: 0 0 20px 10px rgba(37, 99, 235, 0.5);
+        border-radius: 10px;
+        position: relative;
+        z-index: 5;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          margin-left: 0;
+          padding: 15px;
+        }
+        .filters {
+          flex-direction: column;
+          align-items: center;
+        }
+        .filters input,
+        .filters select {
+          width: 100%;
+          max-width: 300px;
+        }
+        .featured-grid {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="logo" onclick="window.location.href='/'">
+      <img
+        src="/images/logo.png"
+        alt="Pandemic Response Logo"
+        class="logo-img"
+      />
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-links">
+        <a href="/" class="sidebar-link"
+          ><i class="fa-solid fa-home"></i> Home</a
+        >
+        <a href="/firstPage" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Dashboard</a
+        >
+        <a href="/pandamic" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Live Pandemic Stats</a
+        >
+        <a href="/request" class="sidebar-link"
+          ><i class="fa-solid fa-box-open"></i> Need Resources</a
+        >
+        <a href="/map" class="sidebar-link"
+          ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+        >
+        <a href="/stats" class="sidebar-link"
+          ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+        >
+        <a href="/organizations" class="sidebar-link"
+          ><i class="fa-solid fa-building"></i> Organizations</a
+        >
+        <a href="/org-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+        >
+        <a href="/user-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-user"></i> User Dashboard</a
+        >
+        <a href="/alerts" class="sidebar-link"
+          ><i class="fa-solid fa-bell"></i> Alerts</a
+        >
+        <a href="/profile" class="sidebar-link"
+          ><i class="fa-solid fa-id-card"></i> Profile</a
+        >
+      </div>
+      <div class="user-profile">
+        <img
+          src="/images/logohaire.png"
+          alt="User Photo"
+          id="user-photo"
+          class="user-photo"
+          onclick="toggleSidebarMobile()"
+        />
+        <div class="user-info">
+          <span id="user-name">User Name</span>
+        </div>
+        <button class="profile-btn" onclick="window.location.href='/profile'">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+      <i class="fa-solid fa-bars mobile-hamburger"></i>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <nav class="navbar">
+        <a href="#listing" class="nav-link active">Organizations</a>
+        <button class="volunteer-btn" onclick="openVolunteerModal()">
+          <i class="fa-solid fa-handshake-angle"></i> Become a Volunteer
+        </button>
+      </nav>
+
+      <section class="featured-orgs">
+        <h2><i class="fa-solid fa-star"></i> Featured Organizations</h2>
+        <div class="featured-grid" id="featured-grid"></div>
+      </section>
+
+      <section id="listing" class="org-listing">
+        <h2><i class="fa-solid fa-building"></i> Volunteer Organizations</h2>
+        <div class="filters">
+          <input
+            type="text"
+            id="org-filter"
+            placeholder="Search Organizations..."
+          />
+          <select id="category-filter">
+            <option value="">All Categories</option>
+            <option value="NGO">NGO</option>
+            <option value="Hospital">Hospital</option>
+            <option value="Org">Organization</option>
+          </select>
+          <select id="location-filter">
+            <option value="">All Locations</option>
+          </select>
+          <select id="sort-filter">
+            <option value="name">Sort by Name</option>
+            <option value="location">Sort by Location</option>
+            <option value="popularity">Sort by Popularity</option>
+          </select>
+        </div>
+        <div class="org-grid" id="org-grid"></div>
+        <button id="load-more">Load More</button>
+      </section>
+
+      <!-- Volunteer Modal -->
+      <div class="modal" id="volunteer-modal">
+        <div class="modal-content">
+          <span class="modal-close" onclick="closeVolunteerModal()">×</span>
+          <h2>
+            <i class="fa-solid fa-handshake-angle"></i> Become a Volunteer
+          </h2>
+          <div class="volunteer-tabs">
+            <button class="tab-btn active" onclick="showTab('individual')">
+              Individual
+            </button>
+            <button class="tab-btn" onclick="showTab('create-org')">
+              Create Org
+            </button>
+            <button class="tab-btn" onclick="showTab('join-org')">
+              Join Org
+            </button>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+          </div>
+
+          <form id="individual-form" class="volunteer-form active">
+            <div class="form-step" data-step="1">
+              <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input
+                  type="text"
+                  id="ind-name"
+                  placeholder="Full Name"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                  type="email"
+                  id="ind-email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="next-btn"
+                onclick="nextStep('individual', 2)"
+              >
+                Next
+              </button>
+            </div>
+            <div class="form-step hidden" data-step="2">
+              <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <select id="ind-country-code" required>
+                  <option value="+1">+1 (US)</option>
+                  <option value="+91">+91 (IN)</option>
+                  <option value="+44">+44 (UK)</option>
+                </select>
+                <input
+                  type="tel"
+                  id="ind-phone"
+                  placeholder="Phone Number"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fa-solid fa-briefcase"></i>
+                <input
+                  type="text"
+                  id="ind-skills"
+                  placeholder="Skills (e.g., Medical, Logistics)"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="prev-btn"
+                onclick="prevStep('individual', 1)"
+              >
+                Previous
+              </button>
+              <button type="submit" class="submit-btn">Submit</button>
+            </div>
+          </form>
+
+          <form id="create-org-form" class="volunteer-form hidden">
+            <div class="form-step" data-step="1">
+              <div class="input-group">
+                <i class="fa-solid fa-building"></i>
+                <input
+                  type="text"
+                  id="org-name"
+                  placeholder="Organization Name"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                  type="email"
+                  id="org-email"
+                  placeholder="Contact Email"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="next-btn"
+                onclick="nextStep('create-org', 2)"
+              >
+                Next
+              </button>
+            </div>
+            <div class="form-step hidden" data-step="2">
+              <div class="input-group">
+                <i class="fa-solid fa-map-marker-alt"></i>
+                <input
+                  type="text"
+                  id="org-location"
+                  placeholder="Location"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fa-solid fa-file-alt"></i>
+                <textarea
+                  id="org-description"
+                  placeholder="Description"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                class="prev-btn"
+                onclick="prevStep('create-org', 1)"
+              >
+                Previous
+              </button>
+              <button type="submit" class="submit-btn">Submit</button>
+            </div>
+          </form>
+
+          <form id="join-org-form" class="volunteer-form hidden">
+            <div class="form-step" data-step="1">
+              <div class="input-group">
+                <i class="fa-solid fa-search"></i>
+                <input
+                  type="text"
+                  id="org-search"
+                  placeholder="Search Organizations"
+                />
+              </div>
+              <div class="org-list" id="org-list"></div>
+              <button
+                type="button"
+                class="next-btn"
+                onclick="nextStep('join-org', 2)"
+              >
+                Next
+              </button>
+            </div>
+            <div class="form-step hidden" data-step="2">
+              <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input
+                  type="text"
+                  id="join-name"
+                  placeholder="Your Full Name"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                  type="email"
+                  id="join-email"
+                  placeholder="Your Email"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="prev-btn"
+                onclick="prevStep('join-org', 1)"
+              >
+                Previous
+              </button>
+              <button type="submit" class="submit-btn">Join</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Organization Details Modal -->
+      <div class="modal" id="org-details-modal">
+        <div class="modal-content">
+          <span class="modal-close" onclick="closeDetailsModal()">×</span>
+          <h2 id="org-details-name"></h2>
+          <p id="org-details-category"></p>
+          <p id="org-details-location"></p>
+          <p id="org-details-description"></p>
+          <div class="btn-group">
+            <button class="join-btn" onclick="joinFromDetails()">
+              Join Now
+            </button>
+            <button class="contact-btn" onclick="contactFromDetails()">
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tutorial Overlay -->
+      <div class="tutorial-overlay" id="tutorial-overlay">
+        <div class="tutorial-box">
+          <h3 id="tutorial-title"></h3>
+          <p id="tutorial-text"></p>
+          <div class="tutorial-buttons">
+            <button class="tutorial-btn skip-btn" id="skip-tutorial">
+              Skip Tutorial
+            </button>
+            <button class="tutorial-btn gotcha-btn" id="next-tutorial">
+              Got It
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>© 2025 Pandemic Response. All Rights Reserved.</p>
+        <div class="footer-links">
+          <a href="/privacy"><i class="fa-solid fa-lock"></i> Privacy Policy</a>
+          <a href="/terms"
+            ><i class="fa-solid fa-file-contract"></i> Terms of Service</a
+          >
+          <a href="/contact"><i class="fa-solid fa-envelope"></i> Contact Us</a>
+        </div>
+      </footer>
+    </main>
+    <div class="grey"></div>
+    <div class="popup" id="popup">
+      <span class="popup-text" id="popup-text"></span>
+      <button class="close-popup" id="close-popup">Close</button>
+    </div>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="/js/sidebar.js"></script>
+    <script>
+      let currentOrgId = null;
+      let page = 1;
+      const orgsPerPage = 6;
+
+      // Popup Functions
+      const popup = document.getElementById("popup");
+      const popupText = document.getElementById("popup-text");
+      const closePopupButton = document.getElementById("close-popup");
+
+      closePopupButton.addEventListener(
+        "click",
+        () => (popup.style.display = "none")
+      );
+
+      function showPopupMessage(message) {
+        popupText.textContent = message;
+        popup.style.display = "flex";
+        setTimeout(() => (popup.style.display = "none"), 3000);
+      }
+
+      // Volunteer Modal Functions
+      function openVolunteerModal() {
+        document.getElementById("volunteer-modal").style.display = "flex";
+        showTab("individual");
+        fetchOrganizationsForJoin();
+      }
+
+      function closeVolunteerModal() {
+        document.getElementById("volunteer-modal").style.display = "none";
+        resetForms();
+      }
+
+      function showTab(tabId) {
+        const tabs = document.querySelectorAll(".tab-btn");
+        const forms = document.querySelectorAll(".volunteer-form");
+        tabs.forEach((btn) => btn.classList.remove("active"));
+        forms.forEach((form) => form.classList.remove("active"));
+        document
+          .querySelector(`[onclick="showTab('${tabId}')"]`)
+          .classList.add("active");
+        document.getElementById(`${tabId}-form`).classList.add("active");
+        updateProgress(tabId, 1);
+      }
+
+      function updateProgress(formId, step) {
+        document.getElementById("progress").style.width =
+          step === 1 ? "50%" : "100%";
+      }
+
+      function nextStep(formId, step) {
+        const currentStep = document.querySelector(
+          `#${formId}-form .form-step[data-step="${step - 1}"]`
+        );
+        const nextStep = document.querySelector(
+          `#${formId}-form .form-step[data-step="${step}"]`
+        );
+        currentStep.classList.add("hidden");
+        nextStep.classList.remove("hidden");
+        updateProgress(formId, step);
+      }
+
+      function prevStep(formId, step) {
+        const currentStep = document.querySelector(
+          `#${formId}-form .form-step[data-step="${step + 1}"]`
+        );
+        const prevStep = document.querySelector(
+          `#${formId}-form .form-step[data-step="${step}"]`
+        );
+        currentStep.classList.add("hidden");
+        prevStep.classList.remove("hidden");
+        updateProgress(formId, step);
+      }
+
+      function resetForms() {
+        document.querySelectorAll(".volunteer-form").forEach((form) => {
+          form.reset();
+          form
+            .querySelectorAll(".form-step")
+            .forEach((step) => step.classList.add("hidden"));
+          form
+            .querySelector(".form-step[data-step='1']")
+            .classList.remove("hidden");
+        });
+        updateProgress("individual", 1);
+      }
+
+      // Organization Details Modal
+      function showDetailsModal(org) {
+        currentOrgId = org._id;
+        document.getElementById("org-details-name").textContent = org.name;
+        document.getElementById(
+          "org-details-category"
+        ).textContent = `Category: ${org.category || "Organization"}`;
+        document.getElementById(
+          "org-details-location"
+        ).textContent = `Location: ${org.location}`;
+        document.getElementById("org-details-description").textContent =
+          org.description;
+        document.getElementById("org-details-modal").style.display = "flex";
+      }
+
+      function closeDetailsModal() {
+        document.getElementById("org-details-modal").style.display = "none";
+        currentOrgId = null;
+      }
+
+      function joinFromDetails() {
+        if (currentOrgId) joinOrganization(currentOrgId);
+        closeDetailsModal();
+      }
+
+      function contactFromDetails() {
+        if (currentOrgId) contactOrganization(currentOrgId);
+        closeDetailsModal();
+      }
+
+      // Fetch and Display Organizations
+      async function fetchOrganizations(append = false) {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/organizations?page=${page}&limit=${orgsPerPage}`
+          );
+          const orgs = await response.json();
+          const orgGrid = document.getElementById("org-grid");
+          const locationFilter = document.getElementById("location-filter");
+          const featuredGrid = document.getElementById("featured-grid");
+
+          if (!append) orgGrid.innerHTML = "";
+          const locations = new Set();
+
+          orgs.forEach((org, index) => {
+            const card = document.createElement("div");
+            card.className = "org-card";
+            card.innerHTML = `
+              <h3>${org.name}</h3>
+              <p><i class="fa-solid fa-building"></i> ${
+                org.category || "Organization"
+              }</p>
+              <p><i class="fa-solid fa-map-marker-alt"></i> ${org.location}</p>
+              <p class="rating"><i class="fa-solid fa-star"></i> Rating: ${
+                org.rating || "N/A"
+              }</p>
+              <p><i class="fa-solid fa-users"></i> Volunteers: ${
+                org.volunteerCount || 0
+              }</p>
+              <p>${org.description.slice(0, 100)}...</p>
+              <div class="btn-group">
+                <button class="join-btn" onclick="joinOrganization('${
+                  org._id
+                }')">Join Now</button>
+                <button class="contact-btn" onclick="contactOrganization('${
+                  org._id
+                }')">Contact</button>
+              </div>
+            `;
+            card.onclick = (e) => {
+              if (
+                !e.target.classList.contains("join-btn") &&
+                !e.target.classList.contains("contact-btn")
+              ) {
+                showDetailsModal(org);
+              }
+            };
+            orgGrid.appendChild(card);
+            locations.add(org.location);
+
+            // Featured Organizations (first 3 as example)
+            if (index < 3 && !append) {
+              const featuredCard = document.createElement("div");
+              featuredCard.className = "featured-card";
+              featuredCard.innerHTML = `<h3>${org.name}</h3><p>${org.location}</p>`;
+              featuredGrid.appendChild(featuredCard);
+            }
+          });
+
+          locations.forEach((loc) => {
+            if (!locationFilter.querySelector(`option[value="${loc}"]`)) {
+              const option = document.createElement("option");
+              option.value = loc;
+              option.textContent = loc;
+              locationFilter.appendChild(option);
+            }
+          });
+
+          ScrollReveal().reveal(".org-card", {
+            delay: 200,
+            distance: "50px",
+            origin: "bottom",
+            interval: 100,
+          });
+          ScrollReveal().reveal(".featured-card", {
+            delay: 200,
+            distance: "50px",
+            origin: "left",
+            interval: 100,
+          });
+
+          document.getElementById("load-more").style.display =
+            orgs.length < orgsPerPage ? "none" : "block";
+        } catch (error) {
+          console.error("Error fetching organizations:", error);
+          showPopupMessage("Failed to load organizations.");
+        }
+      }
+
+      // Load More
+      document.getElementById("load-more").addEventListener("click", () => {
+        page++;
+        fetchOrganizations(true);
+      });
+
+      // Filter Organizations
+      function filterOrganizations() {
+        const search = document
+          .getElementById("org-filter")
+          .value.toLowerCase();
+        const category = document.getElementById("category-filter").value;
+        const location = document.getElementById("location-filter").value;
+        const cards = document.querySelectorAll(".org-card");
+
+        cards.forEach((card) => {
+          const name = card.querySelector("h3").textContent.toLowerCase();
+          const cat = card
+            .querySelector("p:nth-child(2)")
+            .textContent.toLowerCase();
+          const loc = card
+            .querySelector("p:nth-child(3)")
+            .textContent.toLowerCase();
+
+          const matchesSearch = name.includes(search);
+          const matchesCategory =
+            !category || cat.includes(category.toLowerCase());
+          const matchesLocation =
+            !location || loc.includes(location.toLowerCase());
+
+          card.style.display =
+            matchesSearch && matchesCategory && matchesLocation
+              ? "block"
+              : "none";
+        });
+      }
+
+      // Sort Organizations
+      function sortOrganizations() {
+        const sortBy = document.getElementById("sort-filter").value;
+        const orgGrid = document.getElementById("org-grid");
+        const cards = Array.from(document.querySelectorAll(".org-card"));
+        cards.sort((a, b) => {
+          if (sortBy === "name")
+            return a
+              .querySelector("h3")
+              .textContent.localeCompare(b.querySelector("h3").textContent);
+          if (sortBy === "location")
+            return a
+              .querySelector("p:nth-child(3)")
+              .textContent.localeCompare(
+                b.querySelector("p:nth-child(3)").textContent
+              );
+          if (sortBy === "popularity")
+            return (
+              (b.querySelector("p:nth-child(5)").textContent.match(/\d+/) ||
+                0) -
+              (a.querySelector("p:nth-child(5)").textContent.match(/\d+/) || 0)
+            );
+        });
+        cards.forEach((card) => orgGrid.appendChild(card));
+      }
+
+      // Join Organization
+      async function joinOrganization(orgId) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showPopupMessage("Please log in to join an organization.");
+          window.location.href = "/login";
+          return;
+        }
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/volunteer/join-org",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify({ orgId }),
+            }
+          );
+          if (!response.ok) throw new Error("Failed to join organization");
+          showPopupMessage("Successfully requested to join the organization!");
+        } catch (error) {
+          console.error("Error joining organization:", error);
+          showPopupMessage("Error joining organization.");
+        }
+      }
+
+      // Contact Organization (Placeholder)
+      async function contactOrganization(orgId) {
+        showPopupMessage(
+          `Contacting organization ${orgId}... (Feature under development)`
+        );
+        // Implement actual contact logic here (e.g., open a form or send an email)
+      }
+
+      // Fetch Organizations for Join Modal
+      async function fetchOrganizationsForJoin() {
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/organizations"
+          );
+          const orgs = await response.json();
+          const orgList = document.getElementById("org-list");
+
+          orgList.innerHTML = "";
+          orgs.forEach((org) => {
+            const div = document.createElement("div");
+            div.className = "org-item";
+            div.textContent = `${org.name} (${org.location})`;
+            div.dataset.orgId = org._id;
+            div.onclick = () => {
+              document
+                .querySelectorAll(".org-item")
+                .forEach((item) => item.classList.remove("selected"));
+              div.classList.add("selected");
+            };
+            orgList.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Error fetching organizations for join:", error);
+          showPopupMessage("Failed to load organizations for joining.");
+        }
+      }
+
+      // Form Submissions
+      async function submitVolunteer(data) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showPopupMessage("Please log in to proceed.");
+          window.location.href = "/login";
+          return;
+        }
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/volunteer/signup",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify(data),
+            }
+          );
+          if (!response.ok) throw new Error("Failed to submit volunteer data");
+          showPopupMessage("Volunteer signup successful!");
+          closeVolunteerModal();
+        } catch (error) {
+          console.error("Error submitting volunteer data:", error);
+          showPopupMessage("Error during signup.");
+        }
+      }
+
+      // Tutorial System (Updated without Map)
+      const tutorialSteps = [
+        {
+          title: "Welcome!",
+          text: "Explore volunteer organizations here.",
+          element: "#listing",
+        },
+        {
+          title: "Featured",
+          text: "Check out top organizations in this section.",
+          element: ".featured-orgs",
+        },
+        {
+          title: "Filters",
+          text: "Use these to find organizations by name, category, or location.",
+          element: ".filters",
+        },
+        {
+          title: "Join",
+          text: "Click 'Join Now' to get involved!",
+          element: ".org-card .join-btn",
+        },
+        {
+          title: "Contact",
+          text: "Reach out to an organization with this button.",
+          element: ".org-card .contact-btn",
+        },
+        {
+          title: "All Set!",
+          text: "You’re ready to explore and join organizations!",
+          element: null,
+        },
+      ];
+
+      let currentStep = 0;
+      const tutorialOverlay = document.getElementById("tutorial-overlay");
+      const tutorialTitle = document.getElementById("tutorial-title");
+      const tutorialText = document.getElementById("tutorial-text");
+      const nextBtn = document.getElementById("next-tutorial");
+      const skipBtn = document.getElementById("skip-tutorial");
+
+      function startTutorial() {
+        if (localStorage.getItem("orgTutorialSkipped") === "true") return;
+        tutorialOverlay.style.display = "flex";
+        showTutorialStep(currentStep);
+      }
+
+      function showTutorialStep(step) {
+        const stepData = tutorialSteps[step];
+        tutorialTitle.textContent = stepData.title;
+        tutorialText.textContent = stepData.text;
+
+        document
+          .querySelectorAll(".highlight")
+          .forEach((el) => el.classList.remove("highlight"));
+        if (stepData.element) {
+          const element = document.querySelector(stepData.element);
+          if (element) {
+            element.classList.add("highlight");
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
+
+      function endTutorial() {
+        tutorialOverlay.style.display = "none";
+        document
+          .querySelectorAll(".highlight")
+          .forEach((el) => el.classList.remove("highlight"));
+      }
+
+      nextBtn.addEventListener("click", () => {
+        currentStep++;
+        if (currentStep < tutorialSteps.length) showTutorialStep(currentStep);
+        else endTutorial();
+      });
+
+      skipBtn.addEventListener("click", () => {
+        localStorage.setItem("orgTutorialSkipped", "true");
+        endTutorial();
+      });
+
+      // Event Listeners
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchOrganizations();
+        startTutorial();
+
+        document
+          .getElementById("org-filter")
+          .addEventListener("input", filterOrganizations);
+        document
+          .getElementById("category-filter")
+          .addEventListener("change", filterOrganizations);
+        document
+          .getElementById("location-filter")
+          .addEventListener("change", filterOrganizations);
+        document
+          .getElementById("sort-filter")
+          .addEventListener("change", sortOrganizations);
+
+        document
+          .getElementById("individual-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+              name: document.getElementById("ind-name").value,
+              email: document.getElementById("ind-email").value,
+              phone: `${document.getElementById("ind-country-code").value}${
+                document.getElementById("ind-phone").value
+              }`,
+              skills: document.getElementById("ind-skills").value,
+              type: "individual",
+            };
+            await submitVolunteer(data);
+          });
+
+        document
+          .getElementById("create-org-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+              name: document.getElementById("org-name").value,
+              email: document.getElementById("org-email").value,
+              location: document.getElementById("org-location").value,
+              description: document.getElementById("org-description").value,
+              type: "create-org",
+            };
+            await submitVolunteer(data);
+          });
+
+        document
+          .getElementById("join-org-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const selectedOrg = document.querySelector(".org-item.selected");
+            if (!selectedOrg) {
+              showPopupMessage("Please select an organization.");
+              return;
+            }
+            const data = {
+              name: document.getElementById("join-name").value,
+              email: document.getElementById("join-email").value,
+              orgId: selectedOrg.dataset.orgId,
+              type: "join-org",
+            };
+            await submitVolunteer(data);
+          });
+      });
+    </script>
+  </body>
+</html>
