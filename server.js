@@ -343,6 +343,159 @@ app.post("/register", async (req, res) => {
     res.json({ message: "OTP sent! Please verify." });
   });
 });
+app.post("/register/verify", async (req, res) => {
+  const { email, otp, password, name, phone, dob } = req.body;
+
+  if (otpStorage[email] !== otp)
+    return res.status(400).json({ error: "Invalid OTP" });
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser)
+    return res.status(400).json({ error: "User already exists" });
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({
+    email,
+    password: hashedPassword,
+    name,
+    phone,
+    dob: new Date(dob),
+    volunteerData: [],
+  });
+  await newUser.save();
+
+  delete otpStorage[email];
+
+  const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  res.json({ message: "Registration successful", token });
+});
+
+// Login Route
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ error: "User not found" });
+
+  bcrypt.compare(password, user.password, (err, result) => {
+    if (err) return res.status(500).json({ error: "Internal error" });
+    if (!result) return res.status(400).json({ error: "Invalid credentials" });
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.json({ message: "Login successful", token });
+  });
+});
+
+// Forgot Password Routes
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Email not found" });
+
+    const otp = generateOTP();
+    user.resetOtp = otp;
+    user.resetOtpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: "Password Reset OTP",
+      html: `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Password Reset OTP</title>
+      <style>
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+          body { font-family: "Poppins", serif; background-color: #f9f9f9; margin: 0; padding: 0; }
+          .email-container { width: 400px; margin: 20px auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden; }
+          .email-header { background-color: #4caf50; color: #ffffff; text-align: center; padding: 20px; }
+          .email-header img { width: 150px; }
+          .email-header h1 { margin: 10px 0 0; font-size: 24px; }
+          .email-body { padding: 20px; text-align: center; }
+          .email-body h2 { font-size: 20px; color: #333; }
+          .email-body .otp-box { background-color: #f4f4f4; font-size: 24px; color: #4caf50; padding: 15px; margin: 20px auto; width: fit-content; border-radius: 5px; border: 1px solid #ddd; }
+          .email-body p { font-size: 16px; color: #555; line-height: 1.6; }
+          .email-footer { text-align: center; padding: 15px; font-size: 14px; color: #777; background-color: #f4f4f4; }
+          .email-footer a { color: #4caf50; text-decoration: none; }
+      </style>
+  </head>
+  <body>
+      <div class="email-container">
+          <div class="email-header">
+              <img src="https://i.postimg.cc/pT69mFMB/logo.png" alt="Website Logo">
+              <h1>Pandemic Response Hub</h1>
+          </div>
+          <div class="email-body">
+              <h2>🔑 Password Reset</h2>
+              <p>We received a request to reset your password. Use the OTP below to proceed:</p>
+              <div class="otp-box">${otp}</div>
+              <p><em>(This OTP is valid for the next 10 minutes.)</em></p>
+              <p>If you didn’t request this, please ignore this email or <a href="#">contact support</a>.</p>
+          </div>
+          <div class="email-footer">
+              <p>Need help? <a href="#">Visit our support page</a>.</p>
+              <p>The <strong>PIPH Team</strong></p>
+          </div>
+      </div>
+  </body>
+  </html>`,
+    };
+
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        console.error("Error sending OTP email:", error);
+        return res.status(500).json({ error: "Failed to send OTP" });
+      }
+      res.json({ message: "OTP sent to your email" });
+    });
+  } catch (err) {
+    console.error("Error in forgot-password:", err);
+    res.status(500).json({ message: "Error sending OTP" });
+  }
+});
+
+app.post("/reset-password/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user || user.resetOtp !== otp || Date.now() > user.resetOtpExpiry) {
+      return res.status(400).json({ valid: false });
+    }
+    res.json({ valid: true });
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    res.status(500).json({ message: "Error verifying OTP" });
+  }
+});
+
+app.post("/reset-password", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetOtp = null;
+    user.resetOtpExpiry = null;
+    await user.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    res.status(500).json({ message: "Error resetting password" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
