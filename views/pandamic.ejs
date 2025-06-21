@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pandemic Hub - Pandemic Response</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/firstPage.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <style>
+      /* Page-Specific Styles */
+      body {
+        position: relative;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%); /* Added light background */
+      }
+
+      #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      .main-content {
+        padding: 30px 40px;
+      }
+
+      .news-ticker {
+        background: #f1f3f5; /* Light grey background */
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db; /* Light grey border */
+        overflow: hidden;
+        white-space: nowrap;
+        margin-bottom: 20px;
+      }
+
+      .ticker-content {
+        display: inline-block;
+        animation: ticker 40s linear infinite;
+      }
+
+      .ticker-content:hover {
+        animation-play-state: paused;
+      }
+
+      @keyframes ticker {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      .news-ticker a {
+        color: #1e40af; /* Blue instead of cyan */
+        text-decoration: none;
+        margin-right: 20px;
+      }
+
+      .news-ticker a:hover {
+        text-decoration: underline;
+      }
+
+      .section-card {
+        background: #ffffff; /* White background */
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #d1d5db; /* Light grey border */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+        margin-bottom: 20px;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .section-card h2 {
+        font-size: 2rem;
+        color: #1e40af; /* Blue instead of cyan */
+        margin-bottom: 15px;
+      }
+
+      /* Enhanced News Section */
+      .news-filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .news-filter-btn {
+        background: transparent;
+        color: #1e40af; /* Blue instead of cyan */
+        border: 1px solid rgba(37, 99, 235, 0.5); /* Adjusted blue */
+        padding: 5px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .news-filter-btn:hover,
+      .news-filter-btn.active {
+        background: rgba(37, 99, 235, 0.3); /* Adjusted blue */
+        border-color: #2563eb; /* Solid blue */
+      }
+
+      .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .news-card {
+        background: #f8fafc; /* Light grey-blue background */
+        padding: 15px;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .news-card:hover {
+        transform: scale(1.05);
+      }
+
+      .news-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .news-card h3 {
+        font-size: 1.2rem;
+        color: #1e40af; /* Blue instead of cyan */
+        margin-bottom: 5px;
+      }
+
+      .news-card p {
+        color: #64748b; /* Medium grey text */
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .news-card .source-date {
+        font-size: 0.8rem;
+        color: #999; /* Lighter grey text */
+      }
+
+      .news-card .actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+
+      .news-card .read-more {
+        background: #2563eb; /* Blue background */
+        color: #ffffff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+
+      .news-card .read-more:hover {
+        background: #1e40af; /* Darker blue on hover */
+      }
+
+      .news-card .bookmark {
+        background: none;
+        border: none;
+        color: #64748b; /* Medium grey */
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .news-card .bookmark.saved {
+        color: #e74c3c; /* Kept red for distinction */
+      }
+
+      .submit-news-btn {
+        background: #2563eb; /* Blue background */
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background 0.3s ease;
+      }
+
+      .submit-news-btn:hover {
+        background: #1e40af; /* Darker blue on hover */
+      }
+
+      /* Other Sections */
+      .prevention-guide {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .guide-item {
+        flex: 1 1 300px;
+        background: #f8fafc; /* Light grey-blue background */
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .guide-item:hover {
+        transform: scale(1.05);
+      }
+
+      .guide-item i {
+        font-size: 2rem;
+        color: #1e40af; /* Blue instead of cyan */
+        margin-bottom: 10px;
+      }
+
+      .guide-item p {
+        color: #64748b; /* Medium grey text */
+      }
+
+      .myth-fact-game {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .game-card {
+        flex: 1 1 250px;
+        background: #f8fafc; /* Light grey-blue background */
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease, background 0.3s ease;
+      }
+
+      .game-card:hover {
+        transform: scale(1.05);
+      }
+
+      .game-card.revealed {
+        background: rgba(37, 99, 235, 0.2); /* Adjusted blue */
+      }
+
+      .game-card p {
+        color: #64748b; /* Medium grey text */
+      }
+
+      .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 300px;
+        background: #ffffff; /* White background */
+        border-radius: 15px;
+        border: 1px solid #d1d5db; /* Light grey border */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+        display: none;
+      }
+
+      .chat-header {
+        background: #2563eb; /* Blue background */
+        padding: 10px;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        color: #ffffff;
+      }
+
+      .chat-body {
+        padding: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        color: #333; /* Dark grey text */
+      }
+
+      .chat-input {
+        display: flex;
+        padding: 10px;
+      }
+
+      .chat-input input {
+        flex: 1;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+        margin-right: 5px;
+        background: #f1f3f5; /* Light grey background */
+        color: #333; /* Dark grey text */
+      }
+
+      .chat-input button {
+        background: #2563eb; /* Blue background */
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .chat-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #2563eb; /* Blue background */
+        color: #ffffff;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .chat-toggle:hover {
+        transform: scale(1.1);
+      }
+
+      .poll {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .poll-option {
+        background: #f8fafc; /* Light grey-blue background */
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .poll-option:hover {
+        background: rgba(37, 99, 235, 0.1); /* Adjusted blue */
+      }
+
+      .poll-option.voted {
+        background: rgba(37, 99, 235, 0.3); /* Adjusted blue */
+      }
+
+      .poll-result {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .status-indicator {
+        background: #f1f3f5; /* Light grey background */
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .status-indicator.green {
+        background: rgba(46, 204, 113, 0.3); /* Kept green for distinction */
+      }
+
+      .status-indicator.red {
+        background: rgba(231, 76, 60, 0.3); /* Kept red for distinction */
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Kept semi-transparent overlay */
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: #ffffff; /* White background */
+        width: 90%;
+        max-width: 500px;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #d1d5db; /* Light grey border */
+        color: #333; /* Dark grey text */
+      }
+
+      .modal-content h3 {
+        color: #2563eb; /* Blue instead of cyan */
+        margin-bottom: 15px;
+      }
+
+      .modal-content input,
+      .modal-content textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #d1d5db; /* Light grey border */
+        background: #f1f3f5; /* Light grey background */
+        color: #333; /* Dark grey text */
+      }
+
+      .modal-content button {
+        background: #2563eb; /* Blue background */
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .modal-content button:hover {
+        background: #1e40af; /* Darker blue on hover */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 20px;
+        }
+
+        .prevention-guide,
+        .myth-fact-game,
+        .news-grid {
+          flex-direction: column;
+          grid-template-columns: 1fr;
+        }
+
+        .chat-widget {
+          width: 90%;
+          right: 5%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Particle Background -->
+    <!-- <div id="particles-js"></div> -->
+
+    <!-- Sidebar -->
+    <div class="logo" onclick="window.location.href='/'">
+      <img src="/images/logo.png" alt="Pandemic Response Logo" class="logo-img" />
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-links">
+        <a href="/" class="sidebar-link"
+          ><i class="fa-solid fa-home"></i> Home</a
+        >
+        <a href="/firstPage" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Dashboard</a
+        >
+        <a href="/pandamic" class="sidebar-link"
+          ><i class="fa-solid fa-virus"></i> Pandemic Hub</a
+        >
+        <a href="/request" class="sidebar-link"
+          ><i class="fa-solid fa-box-open"></i> Need Resources</a
+        >
+        <a href="/map" class="sidebar-link"
+          ><i class="fa-solid fa-hospital"></i> Find Hospitals</a
+        >
+        <a href="/stats" class="sidebar-link"
+          ><i class="fa-solid fa-chart-pie"></i> Graph Analytics</a
+        >
+        <a href="/organizations" class="sidebar-link"
+          ><i class="fa-solid fa-building"></i> Organizations</a
+        >
+        <a href="/org-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-tachometer-alt"></i> Org Dashboard</a
+        >
+        <a href="/user-dashboard" class="sidebar-link"
+          ><i class="fa-solid fa-user"></i> User Dashboard</a
+        >
+        <a href="/alerts" class="sidebar-link"
+        ><i class="fa-solid fa-alert"></i> Alerts</a
+      >
+        <a href="/profile" class="sidebar-link"
+          ><i class="fa-solid fa-id-card"></i> Profile</a
+        >
+      </div>
+      <div class="user-profile">
+        <img
+          src="/default-user.png"
+          alt="User Photo"
+          id="user-photo"
+          class="user-photo"
+          onclick="toggleSidebarMobile()"
+        />
+        <div class="user-info">
+          <span id="user-name">User Name</span>
+          <!-- <span id="user-email">user@example.com</span> -->
+        </div>
+        <button class="profile-btn" onclick="window.location.href='/profile'">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-toggle" onclick="toggleSidebarMobile()">
+      <i class="fa-solid fa-bars mobile-hamburger"></i>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- News Ticker -->
+      <div class="news-ticker">
+        <div class="ticker-content" id="ticker-content">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Pandemic Status Indicator -->
+      <div class="status-indicator" id="status-indicator">
+        <h2>
+          <i class="fa-solid fa-info-circle"></i> Current Pandemic Status:
+          <span id="status-text">Loading...</span>
+        </h2>
+      </div>
+
+      <!-- Enhanced News Section -->
+      <div class="section-card">
+        <h2><i class="fa-solid fa-newspaper"></i> Pandemic News</h2>
+        <div class="news-filters">
+          <button
+            class="news-filter-btn active"
+            data-filter="all"
+            onclick="filterNews('all')"
+          >
+            All
+          </button>
+          <button
+            class="news-filter-btn"
+            data-filter="outbreaks"
+            onclick="filterNews('outbreaks')"
+          >
+            Outbreaks
+          </button>
+          <button
+            class="news-filter-btn"
+            data-filter="vaccines"
+            onclick="filterNews('vaccines')"
+          >
+            Vaccines
+          </button>
+          <button
+            class="news-filter-btn"
+            data-filter="policies"
+            onclick="filterNews('policies')"
+          >
+            Policies
+          </button>
+        </div>
+        <div class="news-grid" id="news-grid">
+          <!-- Populated via JavaScript -->
+        </div>
+        <button class="submit-news-btn" onclick="toggleNewsModal()">
+          Submit Your News
+        </button>
+      </div>
+
+      <!-- Prevention Guide -->
+      <div class="section-card">
+        <h2><i class="fa-solid fa-shield-alt"></i> How to Protect Yourself</h2>
+        <div class="prevention-guide">
+          <div class="guide-item">
+            <i class="fa-solid fa-mask"></i>
+            <p>Wear a mask properly over your nose and mouth.</p>
+          </div>
+          <div class="guide-item">
+            <i class="fa-solid fa-hands-wash"></i>
+            <p>Wash hands with soap for at least 40 seconds.</p>
+          </div>
+          <div class="guide-item">
+            <i class="fa-solid fa-people-arrows"></i>
+            <p>Maintain a 6-foot distance from others.</p>
+          </div>
+          <div class="guide-item">
+            <i class="fa-solid fa-syringe"></i>
+            <p>Stay up-to-date with vaccinations.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Myth vs. Fact Game -->
+      <div class="section-card">
+        <h2><i class="fa-solid fa-question-circle"></i> Myth vs. Fact Game</h2>
+        <div class="myth-fact-game">
+          <div
+            class="game-card"
+            data-answer="myth"
+            onclick="revealAnswer(this)"
+          >
+            Masks don’t protect against viruses.
+          </div>
+          <div
+            class="game-card"
+            data-answer="fact"
+            onclick="revealAnswer(this)"
+          >
+            Handwashing reduces infection risk.
+          </div>
+          <div
+            class="game-card"
+            data-answer="myth"
+            onclick="revealAnswer(this)"
+          >
+            Vaccines cause pandemics.
+          </div>
+          <div
+            class="game-card"
+            data-answer="fact"
+            onclick="revealAnswer(this)"
+          >
+            Social distancing slows spread.
+          </div>
+        </div>
+      </div>
+
+      <!-- User Polls -->
+      <div class="section-card">
+        <h2><i class="fa-solid fa-poll"></i> Community Poll</h2>
+        <div class="poll">
+          <p>Have you followed mask mandates in your area?</p>
+          <div class="poll-option" onclick="votePoll(this, 'yes')">Yes</div>
+          <div class="poll-option" onclick="votePoll(this, 'no')">No</div>
+          <div class="poll-result" id="poll-result">Yes: 0% | No: 0%</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chat-widget">
+      <div class="chat-header">Pandemic Assistant</div>
+      <div class="chat-body" id="chat-body">
+        <p>Welcome! Ask me anything about pandemics.</p>
+      </div>
+      <div class="chat-input">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Type your question..."
+        />
+        <button onclick="sendChatMessage()">Send</button>
+      </div>
+    </div>
+    <button class="chat-toggle" onclick="toggleChat()">
+      <i class="fa-solid fa-comment"></i>
+    </button>
+
+    <!-- Popup -->
+    <div class="grey"></div>
+    <div class="popup" id="popup">
+      <span class="popup-text" id="popup-text"></span>
+      <button class="close-popup" id="close-popup">Close</button>
+    </div>
+
+    <!-- Submit News Modal -->
+    <div class="modal" id="news-modal">
+      <div class="modal-content">
+        <h3>Submit Your News</h3>
+        <input type="text" id="news-title" placeholder="News Title" />
+        <textarea
+          id="news-description"
+          placeholder="Description"
+          rows="4"
+        ></textarea>
+        <button onclick="submitNews()">Submit</button>
+        <button onclick="toggleNewsModal()">Close</button>
+      </div>
+    </div>
+
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/firstPage.js"></script>
+    <script>
+      const apiKey = "ff96b9f361a74304950aeff92e607e7e"; // Replace with your News API key
+      let pollVotes = { yes: 0, no: 0 };
+      let newsArticles = [];
+      let savedArticles =
+        JSON.parse(localStorage.getItem("savedArticles")) || [];
+
+      // Real-Time News Ticker
+      async function fetchNewsTicker() {
+        try {
+          const response = await fetch(
+            `https://newsapi.org/v2/everything?q=pandemic OR COVID OR outbreak&language=en&sortBy=publishedAt&pageSize=5&apiKey=${apiKey}`
+          );
+          const data = await response.json();
+          const ticker = document.getElementById("ticker-content");
+          ticker.innerHTML = data.articles
+            .map(
+              (article) =>
+                `<a href="${article.url}" target="_blank">${article.title}</a>`
+            )
+            .join(" • ");
+        } catch (error) {
+          console.error("Error fetching news ticker:", error);
+          document.getElementById("ticker-content").innerHTML =
+            "Unable to load news.";
+        }
+      }
+
+      // Fetch News for Section
+      async function fetchNews() {
+        try {
+          const response = await fetch(
+            `https://newsapi.org/v2/everything?q=pandemic OR COVID OR outbreak OR vaccine OR health policy&language=en&sortBy=publishedAt&pageSize=9&apiKey=${apiKey}`
+          );
+          const data = await response.json();
+          newsArticles = data.articles.map((article, index) => ({
+            id: index,
+            title: article.title,
+            description: article.description || "No description available.",
+            url: article.url,
+            image: article.urlToImage || "https://thumbs.dreamstime.com/b/news-newspapers-folded-stacked-word-wooden-block-puzzle-dice-concept-newspaper-media-press-release-42301371.jpg",
+            date: new Date(article.publishedAt).toLocaleDateString(),
+            source: article.source.name,
+            category: categorizeNews(article.title + " " + article.description),
+          }));
+          displayNews(newsArticles);
+        } catch (error) {
+          console.error("Error fetching news:", error);
+          document.getElementById("news-grid").innerHTML =
+            "<p>Unable to load news.</p>";
+        }
+      }
+
+      function categorizeNews(content) {
+        content = content.toLowerCase();
+        if (content.includes("outbreak") || content.includes("cases"))
+          return "outbreaks";
+        if (content.includes("vaccine") || content.includes("vaccination"))
+          return "vaccines";
+        if (
+          content.includes("policy") ||
+          content.includes("guidelines") ||
+          content.includes("mandate")
+        )
+          return "policies";
+        return "all";
+      }
+
+      function displayNews(articles) {
+        const grid = document.getElementById("news-grid");
+        grid.innerHTML = "";
+        articles.forEach((article) => {
+          const card = document.createElement("div");
+          card.className = "news-card";
+          card.innerHTML = `
+                    <img src="${article.image}" alt="${
+            article.title
+          }" onerror="this.src='https://thumbs.dreamstime.com/b/news-newspapers-folded-stacked-word-wooden-block-puzzle-dice-concept-newspaper-media-press-release-42301371.jpg'">
+                    <h3>${article.title}</h3>
+                    <p>${article.description}</p>
+                    <div class="source-date">${article.source} - ${
+            article.date
+          }</div>
+                    <div class="actions">
+                        <a href="${
+                          article.url
+                        }" target="_blank" class="read-more">Read More</a>
+                        <button class="bookmark ${
+                          savedArticles.some((a) => a.id === article.id)
+                            ? "saved"
+                            : ""
+                        }" onclick="toggleBookmark(${
+            article.id
+          })"><i class="fa-solid fa-heart"></i></button>
+                    </div>
+                `;
+          grid.appendChild(card);
+        });
+      }
+
+      function filterNews(category) {
+        document
+          .querySelectorAll(".news-filter-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelector(`.news-filter-btn[data-filter="${category}"]`)
+          .classList.add("active");
+        const filtered =
+          category === "all"
+            ? newsArticles
+            : newsArticles.filter((article) => article.category === category);
+        displayNews(filtered);
+      }
+
+      function toggleBookmark(id) {
+        const article = newsArticles.find((a) => a.id === id);
+        const index = savedArticles.findIndex((a) => a.id === id);
+        const bookmarkBtn = document.querySelector(
+          `.bookmark[onclick="toggleBookmark(${id})"]`
+        );
+        if (index === -1) {
+          savedArticles.push(article);
+          bookmarkBtn.classList.add("saved");
+          showPopupMessage("Article saved!");
+        } else {
+          savedArticles.splice(index, 1);
+          bookmarkBtn.classList.remove("saved");
+          showPopupMessage("Article removed from saved.");
+        }
+        localStorage.setItem("savedArticles", JSON.stringify(savedArticles));
+      }
+
+      function toggleNewsModal() {
+        const modal = document.getElementById("news-modal");
+        modal.style.display =
+          modal.style.display === "block" ? "none" : "block";
+      }
+
+      function submitNews() {
+        const title = document.getElementById("news-title").value.trim();
+        const description = document
+          .getElementById("news-description")
+          .value.trim();
+        if (title && description) {
+          const newArticle = {
+            id: newsArticles.length,
+            title,
+            description,
+            url: "#",
+            image: "https://thumbs.dreamstime.com/b/news-newspapers-folded-stacked-word-wooden-block-puzzle-dice-concept-newspaper-media-press-release-42301371.jpg",
+            date: new Date().toLocaleDateString(),
+            source: "User Submission",
+            category: categorizeNews(title + " " + description),
+          };
+          newsArticles.unshift(newArticle); // Add to top
+          displayNews(newsArticles);
+          toggleNewsModal();
+          document.getElementById("news-title").value = "";
+          document.getElementById("news-description").value = "";
+          showPopupMessage("News submitted! Awaiting moderation.");
+        } else {
+          showPopupMessage("Please fill in both title and description.");
+        }
+      }
+
+      // Pandemic Status Indicator
+      function updateStatusIndicator() {
+        const statusText = document.getElementById("status-text");
+        const indicator = document.getElementById("status-indicator");
+        const status = Math.random() > 0.5 ? "Low Risk" : "Active Outbreak"; // Mock logic
+        statusText.textContent = status;
+        indicator.classList.remove("green", "red");
+        indicator.classList.add(status === "Low Risk" ? "green" : "red");
+      }
+
+      // Myth vs. Fact Game
+      function revealAnswer(card) {
+        if (!card.classList.contains("revealed")) {
+          card.classList.add("revealed");
+          const answer = card.getAttribute("data-answer");
+          card.innerHTML += `<p>${
+            answer === "myth" ? "Myth: This is false!" : "Fact: This is true!"
+          }</p>`;
+        }
+      }
+
+      // User Polls
+      function votePoll(option, choice) {
+        if (!option.classList.contains("voted")) {
+          pollVotes[choice]++;
+          document
+            .querySelectorAll(".poll-option")
+            .forEach((opt) => opt.classList.add("voted"));
+          const total = pollVotes.yes + pollVotes.no;
+          const yesPercent = total
+            ? Math.round((pollVotes.yes / total) * 100)
+            : 0;
+          const noPercent = total
+            ? Math.round((pollVotes.no / total) * 100)
+            : 0;
+          document.getElementById(
+            "poll-result"
+          ).textContent = `Yes: ${yesPercent}% | No: ${noPercent}%`;
+          document.getElementById("poll-result").style.display = "block";
+        }
+      }
+
+      // Live Q&A Chat
+      function toggleChat() {
+        const chat = document.getElementById("chat-widget");
+        chat.style.display = chat.style.display === "block" ? "none" : "block";
+      }
+
+      function sendChatMessage() {
+        const input = document.getElementById("chat-input");
+        const message = input.value.trim();
+        if (message) {
+          const chatBody = document.getElementById("chat-body");
+          chatBody.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+          const responses = {
+            "how to wear a mask":
+              "Cover your nose and mouth fully, ensuring no gaps.",
+            handwashing: "Wash with soap for at least 40 seconds.",
+            vaccine: "Check with your local health authority for updates.",
+          };
+          const reply =
+            responses[message.toLowerCase()] ||
+            "I’m not sure, but stay safe and check official sources!";
+          setTimeout(() => {
+            chatBody.innerHTML += `<p><strong>Assistant:</strong> ${reply}</p>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+          }, 1000);
+          input.value = "";
+        }
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchNewsTicker();
+        fetchNews();
+        updateStatusIndicator();
+        particlesJS("particles-js", {
+          particles: {
+            number: { value: 50 },
+            color: { value: "#00ffff" },
+            size: { value: 3 },
+            line_linked: { enable: false },
+          },
+          interactivity: {
+            detect_on: "canvas",
+            events: { onhover: { enable: true, mode: "repulse" } },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
