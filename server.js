@@ -1,11 +1,17 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const Razorpay = require("razorpay");
+const crypto = require("crypto");
+const WebSocket = require("ws");
+const cors = require("cors");
+const { createObjectCsvWriter } = require("csv-writer");
 const path = require("path");
 const app = express();
 const port = 8000;
@@ -19,11 +25,6 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
   console.log("Uploads folder created:", uploadsDir);
 }
-
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost/pandemic")
-  .then(() => console.log("Database is ready..!"))
-  .catch((err) => console.log("MongoDB connection error:", err));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -229,55 +230,6 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
 });
 
-app.set("views", path.join(__dirname, "views"));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/home.html"))
-);
-app.get("/login", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/log-in.html"))
-);
-app.get("/signup", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/sign-up.html"))
-);
-app.get("/firstPage", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/firstPage.html"))
-);
-app.get("/map", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/map.html"))
-);
-app.get("/request", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/request.html"))
-);
-app.get("/admin", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/manageRequest.html"))
-);
-app.get("/pandamic", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/pandamic.html"))
-);
-app.get("/alerts", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/alert.html"))
-);
-app.get("/hospital-dashboard", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/hospital-dashboard.html"))
-);
-app.get("/organizations", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/organizations.html"))
-);
-app.get("/org-dashboard", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/org-dashboard.html"))
-);
-app.get("/stats", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/stats.html"))
-);
-app.get("/profile", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/updateProfile.html"))
-);
-app.get("/user-dashboard", (req, res) =>
-  res.sendFile(path.join(__dirname, "/views/user-dashboard.html"))
-);
 
 const allowedEmails = [
   "sunilnp@acem.edu.in",
@@ -1042,6 +994,36 @@ app.get("/signup", (req, res) => {
 });
 app.get("/firstPage", (req, res) => {
   res.render("firstPage");
+});
+app.get("/map", (req, res) => {
+  res.render("map");
+});
+app.get("/request", (req, res) => {
+  res.render("request");
+});
+app.get("/admin", (req, res) => {
+  res.render("manageRequest");
+});
+app.get("/pandamic", (req, res) => {
+  res.render("pandamic");
+});
+app.get("/alerts", (req, res) => {
+  res.render("alerts");
+});
+app.get("/hospital-dashboard", (req, res) => {
+  res.render("hospital-dashboard");
+});
+app.get("/organizations", (req, res) => {
+  res.render("organizations");
+});
+app.get("/stats", (req, res) => {
+  res.render("stats");
+});
+app.get("/profile", (req, res) => {
+  res.render("updateProfile");
+});
+app.get("/user-dashboard", (req, res) => {
+  res.render("user-dashboard");
 });
 
 app.post("/register", async (req, res) => {
