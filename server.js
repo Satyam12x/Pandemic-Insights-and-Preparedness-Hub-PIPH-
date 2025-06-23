@@ -1025,7 +1025,7 @@ app.get("/pandamic", (req, res) => {
   res.render("pandamic");
 });
 app.get("/alerts", (req, res) => {
-  res.render("alerts");
+  res.render("alert");
 });
 app.get("/hospital-dashboard", (req, res) => {
   res.render("hospital-dashboard");
